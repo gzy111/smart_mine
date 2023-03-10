@@ -27,13 +27,13 @@
     @next-click="nextClik()"
     @prev-click="prevClik()"
     v-model:current-page="currentPage"
-    @current-page="handleCurrentChange"
+    @current-change="handleCurrentChange"
   />
 </template>
 
 <script lang="ts" setup>
 import { computed, ref,onMounted ,reactive,toRaw,shallowReactive, onBeforeMount} from 'vue'
-import { mallGoodsDetailAPI } from "../api/index";
+import {selectAllAPI} from "../api/equipmentAPI"
 interface equipment {
   date: string
   equipmentCode: string
@@ -61,32 +61,30 @@ const prevClik=()=>{
 
 var info = ref<equipment>() 
 
-var a = ref()
+
 const handleEdit = (index: number, row: equipment) => {
   console.log(index, row)
 }
 const handleDelete = (index: number, row: equipment) => {
   console.log(index, row)
 }
-interface page {
-  pageNum: number
-  pageSize?: number
-}
+
+//更新equipment的数据
 function list(){
-  mallGoodsDetailAPI({pageNum:pageNum.value,pageSize:pageSize.value}).then( (res: any) => {
+  selectAllAPI({pageNum:currentPage.value,pageSize:pageSize.value}).then( (res: any) => {
       info.value =res.data.data.list
       total.value=res.data.data.pages
       pageCount.value=res.data.data.total
 	});
 }
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`)
-}
-const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`)
-}
+  const handleCurrentChange = (val: number) => {
+    console.log(`current page: ${val}`)
+    currentPage.value=val
+    list()
+  }
 
 list()
+
 
 
 

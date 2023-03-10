@@ -6,6 +6,7 @@ export function mallGoodsDetailAPI(params: object) {
     method: 'get',
     params
   })
+
 }
 
 export function testAPI(params: object) {

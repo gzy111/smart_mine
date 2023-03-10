@@ -1,12 +1,12 @@
 <template>
   <div class="common-layout">
     <el-container style="height: 100vh">
-      <el-header class="header"  >智慧矿山管理系统</el-header>
+      <el-header class="header">智慧矿山管理系统</el-header>
       <el-container>
         <!-- <div style="width: 20px;height: 20px;"><el-icon><ArrowRightBold /></el-icon></div> -->
         <!-- 左边菜单栏开始-->
-        <el-aside  class="left_menu" style="width: var(--el-aside-width,)">
-   
+        <el-aside class="left_menu" style="width: var(--el-aside-width,)">
+
           <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen"
             @close="handleClose">
             <el-sub-menu index="1">
@@ -19,7 +19,7 @@
               <el-menu-item-group>
 
                 <router-link to="/userinfo"><el-menu-item index="/userinfo">员工管理</el-menu-item></router-link>
-                <el-menu-item index="1-2">部门管理</el-menu-item>
+                <router-link to="/DeptView"><el-menu-item index="/DeptView">部门管理</el-menu-item></router-link>
                 <el-menu-item index="1-3">岗位管理</el-menu-item>
               </el-menu-item-group>
             </el-sub-menu>
@@ -35,12 +35,16 @@
                 <el-menu-item index="2-2">操作日志</el-menu-item>
               </el-menu-item-group>
             </el-sub-menu>
-            <el-menu-item index="3">
-              <el-icon>
-                <Van />
-              </el-icon>
-              <template #title>设备管理</template>
-            </el-menu-item>
+
+            <router-link to="/equipment">
+              <el-menu-item index="/equipment">
+                <el-icon>
+                  <Van />
+                </el-icon>
+                <template #title>设备管理</template>
+              </el-menu-item>
+            </router-link>
+            
             <el-menu-item index="4">
               <el-icon>
                 <WindPower />
@@ -63,15 +67,18 @@
             </el-menu-item>
           </el-menu>
         </el-aside>
-          <el-radio-group v-model="isCollapse" style="margin-bottom: 15px;display: block;" >
-            <el-radio-button :label="false"><el-icon><ArrowRightBold /></el-icon></el-radio-button>
-            <el-radio-button :label="true"><el-icon><ArrowLeftBold /></el-icon></el-radio-button>
-          </el-radio-group>
+        <el-radio-group v-model="isCollapse" style="margin-bottom: 15px;display: block;">
+          <el-radio-button :label="false"><el-icon>
+              <ArrowRightBold />
+            </el-icon></el-radio-button>
+          <el-radio-button :label="true"><el-icon>
+              <ArrowLeftBold />
+            </el-icon></el-radio-button>
+        </el-radio-group>
         <!-- 左边菜单栏 结束-->
 
         <!-- 右边 -->
         <el-main class="right_main">
-          Main
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -79,7 +86,7 @@
 
 
 
-</div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -113,30 +120,32 @@ const handleClose = (key: string, keyPath: string[]) => {
   margin: 0px;
   padding: 0px;
 }
-  #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-  }
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 400px;
 }
-.common-layout{
+
+.common-layout {
   display: block;
   width: 100%;
 }
-.header{
+
+.header {
   display: block;
   width: 100%;
   text-align: center;
-    align-items: center;
-    line-height:60px;
-    font-weight:900;
-    font-size:2em;
-    background-color:	rgb(1 17 70);
-}
-
-</style>
+  align-items: center;
+  line-height: 60px;
+  font-weight: 900;
+  font-size: 2em;
+  background-color: rgb(1 17 70);
+}</style>
