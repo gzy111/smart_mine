@@ -19,12 +19,15 @@
       </template>
     </el-table-column>
   </el-table>
-
   <el-pagination
-    :page-size="10"
-    :pager-count="11"
-    layout="prev, pager, next"
-    :total="1000"
+    :page-size=pageNum
+    :page-count="total"
+    layout="prev, pager, next,total,jumper"
+    :total="total"
+    @next-click="nextClik()"
+    @prev-click="prevClik()"
+    v-model:current-page="currentPage"
+    @current-page="handleCurrentChange"
   />
 </template>
 
@@ -37,11 +40,27 @@ interface equipment {
   equipmentName: string
   equipmentType: string
   state:string
+  total:number
 }
 const pageNum=ref(1);
-const pageSize=ref(10)
+const pageSize=ref(5);
+const total=ref(0)
+const pageCount=ref(0)
+const currentPage=ref(1);
 
-var info: any = ref() 
+const nextClik=()=>{
+  pageNum.value += 1
+  console.log(pageNum.value,'1111');
+  list()
+}
+const prevClik=()=>{
+    pageNum.value -= 1
+  console.log(pageNum.value,'1111');
+  list()
+}
+
+var info = ref<equipment>() 
+
 var a = ref()
 const handleEdit = (index: number, row: equipment) => {
   console.log(index, row)
@@ -53,15 +72,21 @@ interface page {
   pageNum: number
   pageSize?: number
 }
-onMounted(()=>{  
+function list(){
   mallGoodsDetailAPI({pageNum:pageNum.value,pageSize:pageSize.value}).then( (res: any) => {
       info.value =res.data.data.list
-      a.value=res.data.data.pageNum
+      total.value=res.data.data.pages
+      pageCount.value=res.data.data.total
 	});
-})
+}
+const handleCurrentChange = (val: number) => {
+  console.log(`current page: ${val}`)
+}
+const handleSizeChange = (val: number) => {
+  console.log(`${val} items per page`)
+}
 
-
-
+list()
 
 
 
