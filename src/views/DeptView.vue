@@ -107,11 +107,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log(ruleForm,'submit!')
-      userSelectAllAPI({ ruleForm}).then((res: any) => {
+      console.log(JSON.stringify(ruleForm),'submit!')
+      inserAPI({  equipmentName: ruleForm.equipmentName,
+                  equipmentType: ruleForm.equipmentType,
+                  equipmentUser: ruleForm.equipmentUser,
+                  state: ruleForm.state
+          }).then((res: any) => {
         console.log(res);
         
-  });
+    });
 
     } else {
       console.log('error submit!', fields)
