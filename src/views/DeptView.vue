@@ -60,6 +60,7 @@ import {lookSelectAPI} from "../api/lookupAPI"
 import{userSelectAllAPI} from "../api/userAPI"
 import {inserAPI} from "../api/equipmentAPI"
 
+
 const formSize = ref('default')
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive({
@@ -107,14 +108,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log(JSON.stringify(ruleForm),'submit!')
-      inserAPI({  equipmentName: ruleForm.equipmentName,
-                  equipmentType: ruleForm.equipmentType,
-                  equipmentUser: ruleForm.equipmentUser,
-                  state: ruleForm.state
-          }).then((res: any) => {
-        console.log(res);
-        
+    inserAPI( ruleForm ).then((res: any) => {
+        console.log(res,"res");
     });
 
     } else {

@@ -1,6 +1,8 @@
 <template>
      <el-row class="mb-4">
-    <el-button type="primary">Primary</el-button>
+      <el-button  @click="dialog()">
+        新增设备
+  </el-button>
   </el-row>
 
   <el-table :data="info" v-loading="loading" style="width: 100%">
@@ -27,16 +29,80 @@
   <el-pagination :page-size=pageNum :page-count="total" layout="prev, pager, next,total,jumper" :total="total"
     @next-click="nextClik()" @prev-click="prevClik()" v-model:current-page="currentPage"
     @current-change="handleCurrentChange" />
+
+
+
+<!-- 弹窗 -->
+<el-dialog v-model="dialogFormVisible" title="新增设备">
+
+  <el-form
+    ref="ruleFormRef"
+    :model="ruleForm"
+    :rules="rules"
+    label-width="120px"
+    class="demo-ruleForm"
+    :size="formSize"
+    status-icon
+  >
+    <el-form-item label="设备名称" prop="equipmentName">
+      <el-input v-model="ruleForm.equipmentName"   />
+    </el-form-item>
+    <el-form-item label="设备类型" prop="equipmentType">
+      <el-select v-model="ruleForm.equipmentType" placeholder="Activity zone" >
+        <el-option      
+      v-for="item in toRaw(equipmentTypeList)"
+      :key="item"
+      :label="item.codeName"
+      :value="item.code+','+item.codeName" />
+      </el-select>
+    </el-form-item>
+
+    <el-form-item label="设备状态"  prop="state">
+      <el-select v-model="ruleForm.state" placeholder="Activity zone">
+        <el-option label="运行" value="1" />
+        <el-option label="停用" value="0" />
+        <el-option label="维修" value="2" />
+      </el-select>
+    </el-form-item>
+
+
+    <el-form-item label="设备分配" prop="equipmentUser" >
+      <el-select v-model="ruleForm.equipmentUser" placeholder="Activity zone" filterable >
+        <el-option      
+          v-for="item in toRaw(userList)"
+          :key="item"
+          :label="item.userName"
+          :value="item.userId" />
+          </el-select>
+      
+    </el-form-item>
+
+    <el-form-item>
+      <el-button type="primary" @click="submitForm(ruleFormRef)">
+        添加
+      </el-button>
+      <el-button @click="resetForm(ruleFormRef)">取消</el-button>
+    </el-form-item>
+  </el-form>
+   
+  </el-dialog>
+<!-- 弹窗 -->
 </template>
   
 <script lang="ts" setup>
 import { computed, ref, onMounted, reactive, toRaw, shallowReactive, onBeforeMount } from 'vue'
 import { selectAllAPI, deleteAPI ,inserAPI} from "../api/equipmentAPI"
+
+import type { FormInstance, FormRules } from 'element-plus'
+import {lookSelectAPI} from "../api/lookupAPI"
+import{userSelectAllAPI} from "../api/userAPI"
+
 interface equipment {
   date: string
   equipmentCode: string
   equipmentName: string
   equipmentType: string
+  equipmentUser: string
   state: string
   total: number
 }
@@ -65,6 +131,11 @@ const tagMap = new Map([
 
 
 const handleEdit = (index: number, row: equipment) => {
+  dialogFormVisible.value=true
+  ruleForm.equipmentName=row.equipmentName
+  ruleForm.equipmentType=row.equipmentType
+  ruleForm.equipmentUser=row.equipmentUser
+  ruleForm.state=row.state
   console.log(index, row)
 }
 const handleDelete = (index: number, row: equipment) => {
@@ -110,10 +181,109 @@ function tagFlg(tag: string) {
     }
   }
 }
-
-
-
 list()
+
+
+
+
+/**
+ * 弹窗
+ * 
+ */
+
+const dialogFormVisible = ref(false)
+const dialog=()=>{
+  dialogFormVisible.value=true;
+  resetForm()
+}
+
+
+const formSize = ref('default')
+const ruleFormRef = ref<FormInstance>()
+const ruleForm = reactive({
+  equipmentName: '',
+  equipmentType: '',
+  equipmentUser: '',
+  state:''
+})
+
+interface lookEquipment {
+  userId: string
+  userName: string
+}
+interface User {
+  userId: string
+  codeName: string
+}
+
+const equipmentTypeList=ref<lookEquipment>()
+const userList=ref<User>()
+
+const rules = reactive<FormRules>({
+  equipmentName: [
+    { required: true, message: '请输入设备名称', trigger: 'blur' },
+    
+  ],
+  equipmentType: [
+    {
+      required: true,
+      message: '请选择类型',
+      trigger: 'change',
+    },
+  ],
+  state: [
+    {
+      required: true,
+      message: '请选择状态',
+      trigger: 'change',
+    },
+  ],
+})
+
+//提交表单
+const submitForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+    inserAPI( ruleForm ).then((res: any) => {
+      dialogFormVisible.value=false
+        console.log(res,"res");
+    });
+
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
+}
+
+//重置表单
+const resetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+  dialogFormVisible.value=false
+
+}
+
+
+
+
+
+
+
+
+lookSelectAPI({ typeName:"设备类型" }).then((res: any) => {
+  equipmentTypeList.value = res.data.data
+  });
+
+  userSelectAllAPI({ }).then((res: any) => {
+    userList.value = res.data.data    
+  });
+
+
+
+
+
+
 
 
 
