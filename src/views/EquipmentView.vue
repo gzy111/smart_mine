@@ -10,6 +10,7 @@
     <el-table-column label="设备编号" prop="equipmentCode" />
     <el-table-column label="设备名称" prop="equipmentName" />
     <el-table-column label="设备类型" prop="equipmentType" />
+    <el-table-column label="使用员工" prop="equipmentUser" />
     <el-table-column prop="state" label="状态" width="100" :filter-method="filterTag" :filters="[
       { text: '停用', value: '0' },
       { text: '运行', value: '1' },
@@ -32,8 +33,8 @@
 
 
 
-<!-- 弹窗 -->
-<el-dialog v-model="dialogFormVisible" title="新增设备">
+<!-- ---------------------------弹窗 ------------------------------------------------------------>
+<el-dialog v-model="dialogFormVisible" :title="ruleForm.equipmentType?'编辑设备': '新增设备'" align-center destroy-on-close width="23%">
 
   <el-form
     ref="ruleFormRef"
@@ -45,10 +46,10 @@
     status-icon
   >
     <el-form-item label="设备名称" prop="equipmentName">
-      <el-input v-model="ruleForm.equipmentName"   />
+      <el-input v-model="ruleForm.equipmentName"  style="width: 214px;" />
     </el-form-item>
     <el-form-item label="设备类型" prop="equipmentType">
-      <el-select v-model="ruleForm.equipmentType" placeholder="Activity zone" >
+      <el-select v-model="ruleForm.equipmentType" placeholder="请选择设备类型" >
         <el-option      
       v-for="item in toRaw(equipmentTypeList)"
       :key="item"
@@ -58,7 +59,7 @@
     </el-form-item>
 
     <el-form-item label="设备状态"  prop="state">
-      <el-select v-model="ruleForm.state" placeholder="Activity zone">
+      <el-select v-model="ruleForm.state" placeholder="请选择设备状态">
         <el-option label="运行" value="1" />
         <el-option label="停用" value="0" />
         <el-option label="维修" value="2" />
@@ -67,35 +68,36 @@
 
 
     <el-form-item label="设备分配" prop="equipmentUser" >
-      <el-select v-model="ruleForm.equipmentUser" placeholder="Activity zone" filterable >
+      <el-select v-model="ruleForm.equipmentUser" placeholder="请选择员工" filterable clearable >
         <el-option      
           v-for="item in toRaw(userList)"
           :key="item"
-          :label="item.userName"
-          :value="item.userId" />
+          :label="item.userId+','+item.userName"
+          :value="item.userId+','+item.userName" />
           </el-select>
       
     </el-form-item>
 
     <el-form-item>
-      <el-button type="primary" @click="submitForm(ruleFormRef)">
-        添加
+      <el-button type="primary" @click="submitForm(ruleFormRef)" :plain="true" >
+        保存
       </el-button>
       <el-button @click="resetForm(ruleFormRef)">取消</el-button>
     </el-form-item>
   </el-form>
    
   </el-dialog>
-<!-- 弹窗 -->
+<!-- ----------------------弹窗------------------------------------------------------------------->
 </template>
   
 <script lang="ts" setup>
-import { computed, ref, onMounted, reactive, toRaw, shallowReactive, onBeforeMount } from 'vue'
-import { selectAllAPI, deleteAPI ,inserAPI} from "../api/equipmentAPI"
+import { computed, ref, onMounted, reactive, toRaw, shallowReactive, onBeforeMount,getCurrentInstance } from 'vue'
+import { selectAllAPI, deleteAPI ,inserAPI,equipmentUpdateAPI} from "../api/equipmentAPI"
 
-import type { FormInstance, FormRules } from 'element-plus'
+import type { FormInstance, FormRules ,ElMessage} from 'element-plus'
 import {lookSelectAPI} from "../api/lookupAPI"
 import{userSelectAllAPI} from "../api/userAPI"
+import {plains} from "../utils/plain"
 
 interface equipment {
   date: string
@@ -106,13 +108,36 @@ interface equipment {
   state: string
   total: number
 }
+const { proxy } = getCurrentInstance()
+//分页
 const pageNum = ref(1);
 const pageSize = ref(10);
 const total = ref(0)
 const pageCount = ref(0)
 const currentPage = ref(1);
+
+
 const loading = ref(false)
 const info = ref<equipment>()
+
+const equipmentTypeList=ref<lookEquipment>()
+const userList=ref<User>()
+const ruleForm = reactive({
+  equipmentCode: '',
+  equipmentName: '',
+  equipmentType: '',
+  equipmentUser: '',
+  state:''
+})
+
+interface lookEquipment {
+  userId: string
+  userName: string
+}
+interface User {
+  userId: string
+  codeName: string
+}
 
 
 const nextClik = () => {
@@ -129,9 +154,10 @@ const tagMap = new Map([
   ["2", "维修"]
 ]);
 
-
+//点击编辑按钮，内容添加到弹出框
 const handleEdit = (index: number, row: equipment) => {
   dialogFormVisible.value=true
+  ruleForm.equipmentCode=row.equipmentCode
   ruleForm.equipmentName=row.equipmentName
   ruleForm.equipmentType=row.equipmentType
   ruleForm.equipmentUser=row.equipmentUser
@@ -177,7 +203,7 @@ function tagFlg(tag: string) {
       return "warning"
     }
     default: {
-      return "";
+      return "0";
     }
   }
 }
@@ -190,34 +216,20 @@ list()
  * 弹窗
  * 
  */
-
 const dialogFormVisible = ref(false)
-const dialog=()=>{
-  dialogFormVisible.value=true;
-  resetForm()
+const dialog= () => {
+  dialogFormVisible.value=true
+  ruleForm.equipmentName=''
+  ruleForm.equipmentType=''
+  ruleForm.equipmentUser=''
+  ruleForm.state=''
 }
+
 
 
 const formSize = ref('default')
 const ruleFormRef = ref<FormInstance>()
-const ruleForm = reactive({
-  equipmentName: '',
-  equipmentType: '',
-  equipmentUser: '',
-  state:''
-})
 
-interface lookEquipment {
-  userId: string
-  userName: string
-}
-interface User {
-  userId: string
-  codeName: string
-}
-
-const equipmentTypeList=ref<lookEquipment>()
-const userList=ref<User>()
 
 const rules = reactive<FormRules>({
   equipmentName: [
@@ -242,19 +254,36 @@ const rules = reactive<FormRules>({
 
 //提交表单
 const submitForm = async (formEl: FormInstance | undefined) => {
+
   if (!formEl) return
   await formEl.validate((valid, fields) => {
-    if (valid) {
+    
+    //添加
+    if (valid && ruleForm.equipmentCode=='') {
     inserAPI( ruleForm ).then((res: any) => {
       dialogFormVisible.value=false
-        console.log(res,"res");
+      proxy.$message.success('添加成功')
+      list() //更新数据
+    });
+    } else if (valid && ruleForm.equipmentCode){
+      //修改信息
+      console.log(ruleForm, fields)
+      equipmentUpdateAPI( ruleForm ).then((res: any) => {
+      dialogFormVisible.value=false
+      proxy.$message.success('修改成功')
+      list() //更新数据
     });
 
-    } else {
-      console.log('error submit!', fields)
+    }else{
+      console.log('error');
+      proxy.$message.error('出现异常')
     }
+
+ 
   })
 }
+
+
 
 //重置表单
 const resetForm = (formEl: FormInstance | undefined) => {
@@ -268,24 +297,15 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
 
 
-
-
-
 lookSelectAPI({ typeName:"设备类型" }).then((res: any) => {
   equipmentTypeList.value = res.data.data
   });
 
   userSelectAllAPI({ }).then((res: any) => {
     userList.value = res.data.data    
+    console.log(res.data.data ,"s");
+    
   });
-
-
-
-
-
-
-
-
 
 
 
