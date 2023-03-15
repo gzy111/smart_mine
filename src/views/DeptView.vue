@@ -12,14 +12,18 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { ref, watch ,toRaw , toRef,reactive,} from 'vue'
 import { ElTree } from 'element-plus'
+import{DeptSelectAllAPI} from "../api/deptAPI"
+import{PostSelectAllAPI} from "../api/postAPI"
+import { da } from 'element-plus/es/locale';
 
 interface Tree {
   id: number
   label: string
   children?: Tree[]
 }
+
 
 const filterText = ref('')
 const treeRef = ref<InstanceType<typeof ElTree>>()
@@ -38,10 +42,41 @@ const filterNode = (value: string, data: Tree) => {
   return data.label.includes(value)
 }
 
+interface Dept{
+  deptId:number
+  deptName:string
+  leader:string
+  status:string
+}
+
+const deptTree = reactive({
+  id: '',
+  label: '',
+  children : []
+})
+
+
+const DeptInfo=ref<Dept>()
+
+function DeptInfoList(){
+  DeptSelectAllAPI({ }).then((res: any) => {
+    DeptInfo.value = res.data.list    
+    console.log(DeptInfo);
+    
+  });
+}
+DeptInfoList()
+
+var key :(keyof Dept);
+for(key in DeptInfo){
+  console.log((DeptInfo as any)[key]);
+  
+}
+
 const data: Tree[] = [
   {
     id: 1,
-    label: 'Level one 1',
+    label: import.meta.env.VITE_COMPANY_TITLE,
     children: [
       {
         id: 4,
@@ -59,7 +94,11 @@ const data: Tree[] = [
       },
     ],
   },
- 
-  
 ]
+
+
+for (var dept in  DeptInfo.value){
+    console.log(dept);
+    
+}
 </script>

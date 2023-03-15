@@ -1,93 +1,163 @@
 <template>
-  <el-table :data="info" style="width: 100%">
-    <el-table-column label="Date" prop="date" />
-    <el-table-column label="设备编号" prop="equipmentCode" />
-    <el-table-column label="设备名称" prop="equipmentName" />
-    <el-table-column label="设备类型" prop="equipmentType" />
-    <el-table-column label="状态" prop="state" />
-    <el-table-column align="right">
-      <template #default="scope">
-        <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-          >编辑</el-button
-        >
-        <el-button
-          size="small"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)"
-          >删除</el-button
-        >
+  <div class="custom-tree-container">
+    <p>Using render-content</p>
+    <el-tree
+      :data="dataSource"
+      node-key="id"
+      default-expand-all
+      :expand-on-click-node="false"
+      :render-content="renderContent"
+    />
+
+
+
+    <p>Using scoped slot</p>
+    <el-tree
+      :data="dataSource"
+      node-key="id"
+      default-expand-all
+      :expand-on-click-node="false"
+    >
+      <template #default="{ node, data }">
+        <span class="custom-tree-node">
+          <span>{{ node.label }}</span>
+          <span>
+            <a @click="append(data)"> Append </a>
+            <a style="margin-left: 8px" @click="remove(node, data)"> Delete </a>
+          </span>
+        </span>
       </template>
-    </el-table-column>
-  </el-table>
-  <el-pagination
-    :page-size=pageNum
-    :page-count="total"
-    layout="prev, pager, next,total,jumper"
-    :total="total"
-    @next-click="nextClik()"
-    @prev-click="prevClik()"
-    v-model:current-page="currentPage"
-    @current-change="handleCurrentChange"
-  />
+    </el-tree>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref,onMounted ,reactive,toRaw,shallowReactive, onBeforeMount} from 'vue'
-import {selectAllAPI} from "../api/equipmentAPI"
-interface equipment {
-  date: string
-  equipmentCode: string
-  equipmentName: string
-  equipmentType: string
-  state:string
-  total:number
-}
-const pageNum=ref(1);
-const pageSize=ref(5);
-const total=ref(0)
-const pageCount=ref(0)
-const currentPage=ref(1);
+import { ref } from 'vue'
+import type Node from 'element-plus/es/components/tree/src/model/node'
 
-const nextClik=()=>{
-  pageNum.value += 1
-  console.log(pageNum.value,'1111');
-  list()
+interface Tree {
+  id: number
+  label: string
+  children?: Tree[]
 }
-const prevClik=()=>{
-    pageNum.value -= 1
-  console.log(pageNum.value,'1111');
-  list()
-}
+let id = 1000
 
-var info = ref<equipment>() 
-
-
-const handleEdit = (index: number, row: equipment) => {
-  console.log(index, row)
-}
-const handleDelete = (index: number, row: equipment) => {
-  console.log(index, row)
-}
-
-//更新equipment的数据
-function list(){
-  selectAllAPI({pageNum:currentPage.value,pageSize:pageSize.value}).then( (res: any) => {
-      info.value =res.data.data.list
-      total.value=res.data.data.pages
-      pageCount.value=res.data.data.total
-	});
-}
-  const handleCurrentChange = (val: number) => {
-    console.log(`current page: ${val}`)
-    currentPage.value=val
-    list()
+const append = (data: Tree) => {
+  const newChild = { id: id++, label: 'testtest', children: [] }
+  if (!data.children) {
+    data.children = []
   }
+  data.children.push(newChild)
+  dataSource.value = [...dataSource.value]
+}
 
-list()
+const remove = (node: Node, data: Tree) => {
+  const parent = node.parent
+  const children: Tree[] = parent.data.children || parent.data
+  const index = children.findIndex((d) => d.id === data.id)
+  children.splice(index, 1)
+  dataSource.value = [...dataSource.value]
+} 
 
+const renderContent = (
+  h,
+  {
+    node,
+    data,
+    store,
+  }: {
+    node: Node
+    data: Tree
+    store: Node['store']
+  }
+) => {
+  return h(
+    'span',
+    {
+      class: 'custom-tree-node',
+    },
+    h('span', null, node.label),
+    h(
+      'span',
+      null,
+      h(
+        'a',
+        {
+          onClick: () => append(data),
+        },
+        'Append '
+      ),
+      h(
+        'a',
+        {
+          style: 'margin-left: 8px',
+          onClick: () => remove(node, data),
+        },
+        'Delete'
+      )
+    )
+  )
+}
 
-
-
-
-
+const dataSource = ref<Tree[]>([
+  {
+    id: 1,
+    label: 'Level one 1',
+    children: [
+      {
+        id: 4,
+        label: 'Level two 1-1',
+        children: [
+          {
+            id: 9,
+            label: 'Level three 1-1-1',
+          },
+          {
+            id: 10,
+            label: 'Level three 1-1-2',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 2,
+    label: 'Level one 2',
+    children: [
+      {
+        id: 5,
+        label: 'Level two 2-1',
+      },
+      {
+        id: 6,
+        label: 'Level two 2-2',
+      },
+    ],
+  },
+  {
+    id: 3,
+    label: 'Level one 3',
+    children: [
+      {
+        id: 7,
+        label: 'Level two 3-1',
+      },
+      {
+        id: 8,
+        label: 'Level two 3-2',
+      },
+    ],
+  },
+])
 </script>
+
+<style>
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+</style>

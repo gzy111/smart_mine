@@ -304,7 +304,6 @@ lookSelectAPI({ typeName:"设备类型" }).then((res: any) => {
   userSelectAllAPI({ }).then((res: any) => {
     userList.value = res.data.data    
     console.log(res.data.data ,"s");
-    
   });
 
 
