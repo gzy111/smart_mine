@@ -6,8 +6,14 @@ export function userSelectAllAPI(params: object) {
     method: 'get',
     params
   })
+}
+export function userSelectPageAPI(params: object) {
+  return request({
+    url: '/User/selectPage',
+    method: 'get',
+    params
+  })
 
 }
-
 
 

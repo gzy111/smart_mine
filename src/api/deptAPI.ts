@@ -7,3 +7,12 @@ export function DeptSelectAllAPI(params: object) {
     params
   })
 }
+
+export function DeptTree(params: object) {
+  return request({
+    url: 'Dept/TreeSelect',
+    method: 'get',
+    params
+  })
+}
+
