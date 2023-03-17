@@ -10,14 +10,27 @@
     :props="defaultProps"
     default-expand-all
     :filter-node-method="filterNode"
+    @node-click="handleNodeClick"
   />
 </el-col>
 
 <el-col :span="20" :xs="24">
-  <el-table :data="tableData" style="width: 100%" :loading="loading">
-    <el-table-column prop="date" label="Date" width="180" />
-    <el-table-column prop="name" label="Name" width="180" />
-    <el-table-column prop="address" label="Address" />
+  <el-table :data="userList" style="width: 100%" v-loading="loading">
+    <el-table-column prop="userId" label="用户id" width="100" />
+    <el-table-column prop="userName" label="姓名" width="100" />
+    <el-table-column prop="sex" label="性别" width="100"/>
+    <el-table-column prop="phonenumber" label="手机" width="150"/>
+    <el-table-column prop="dept.deptName" label="部门" width="100"/>
+    <el-table-column prop="post.postName" label="岗位" width="100" />
+    <el-table-column prop="userPosition" label="位置" width="150" />
+    <el-table-column prop="status" label="状态" />
+    <el-table-column align="right">
+      <template #default="scope">
+        <el-button size="small" @click="" :icon="Edit" ></el-button>
+        <el-button size="small" type="danger" @click="" :icon="Delete"></el-button>
+        <el-button size="small"  @click="" :icon="User"></el-button>
+      </template>
+    </el-table-column>
   </el-table>
 </el-col>
 </el-row>
@@ -28,10 +41,11 @@ import { ref, watch ,toRaw , toRef,reactive,toRefs,getCurrentInstance} from 'vue
 import { ElTree } from 'element-plus'
 import{DeptSelectAllAPI,DeptTree} from "../api/deptAPI"
 import{userSelectPageAPI} from "../api/userAPI"
+import { Delete, Edit, Search, Share, Upload, User } from '@element-plus/icons-vue'
 import { da } from 'element-plus/es/locale';
 
 interface Tree {
-  id: number
+  id: string
   label: string
   children?: Tree[]
 }
@@ -44,28 +58,18 @@ const defaultProps = {
   children: 'children',
   label: 'label',
 }
+
+const { proxy } = getCurrentInstance()
 const datas = reactive({
-  form: {},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    userName: undefined,
-    phonenumber: undefined,
-    status: undefined,
     deptId: undefined,
     postId: undefined,
   },
-  // rules: {
-  //   userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
-  //   nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
-  //   password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
-  //   email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-  //   phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
-  // }
 });
+const { queryParams } = toRefs(datas);
 
-const { queryParams, form } = toRefs(datas);
-const { proxy } = getCurrentInstance()
 watch(filterText, (val) => {
   treeRef.value!.filter(val)
 })
@@ -75,14 +79,30 @@ const filterNode = (value: string, data: Tree) => {
   return data.label.includes(value)
 }
 
-interface Dept{
-  deptId:number
-  deptName:string
-  leader:string
-  status:string
+//节点单击事件
+const handleNodeClick = (data: Tree) => {
+  console.log(data)
+  // if(data.id=1)
+  let str = data.id
+  //岗位编码由P+部门ID(3位数字)+岗位ID组成
+  if(str.substring(0,1)=='P'){
+    console.log("p");
+    queryParams.value.deptId=Number(str.substring(1,4))
+    queryParams.value.postId=Number(str.substring(4,7))
+    console.log(queryParams.value);
+    getList()
+  }else if(str.substring(1,4)!=''){
+    queryParams.value.deptId=str
+    console.log(str,"str");
+    queryParams.value.postId=undefined;
+    getList()
+  }else{
+    queryParams.value.deptId=undefined;
+    queryParams.value.postId=undefined;
+    getList()
+  }
 }
 
-const DeptInfo=ref<Dept>()
 const info=ref(undefined)
 
 //树形结构
@@ -96,18 +116,19 @@ DeptTree({}).then((res: any) => {
 function getList() {
   loading.value = true;
   userSelectPageAPI(queryParams.value).then(res => {
-    loading.value = false;
+   
     console.log(res.data.list);
-    
-    // userList.value = res.data;
+    console.log(queryParams.value,"query");
+    userList.value = res.data.list;
     // total.value = res.data.data.pages
+    loading.value = false;
   });
 };
 getList()
 
 const dataTree: Tree[] = [
   {
-    id: 1,
+    id: '1',
     label: import.meta.env.VITE_COMPANY_TITLE,
     children: info
   },
