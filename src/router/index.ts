@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import UserInfoViewVue from '../views/UserInfoView.vue'
 import EquipmentView from '../views/EquipmentView.vue'
 import DeptView from '../views/DeptView.vue'
+import infoView from '../views/infoView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -26,6 +27,11 @@ const routes: Array<RouteRecordRaw> = [
         name: 'DeptView',
         component: DeptView
     },
+    {
+      path: '/infoView',
+      name: 'infoView',
+      component: infoView
+  },
     ]
   },
 

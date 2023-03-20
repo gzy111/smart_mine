@@ -97,7 +97,7 @@ import { selectAllAPI, deleteAPI ,inserAPI,equipmentUpdateAPI} from "../api/equi
 import type { FormInstance, FormRules ,ElMessage} from 'element-plus'
 import {lookSelectAPI} from "../api/lookupAPI"
 import{userSelectAllAPI} from "../api/userAPI"
-import {plains} from "../utils/plain"
+
 
 interface equipment {
   date: string

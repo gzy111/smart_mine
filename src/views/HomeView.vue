@@ -59,12 +59,15 @@
               <template #title>生产信息</template>
             </el-menu-item>
 
-            <el-menu-item index="6">
+            <router-link to="/infoView">
+            <el-menu-item index="/infoView">
               <el-icon>
                 <Files />
               </el-icon>
               <template #title>固有信息</template>
             </el-menu-item>
+           </router-link>
+
           </el-menu>
         </el-aside>
         <el-radio-group v-model="isCollapse" style="margin-bottom: 15px;display: block;">

@@ -15,7 +15,7 @@ export function userSelectPageAPI(params: object) {
   })
 }
 
-export function deleteUser(params: object) {
+export function deleteUserAPI(params: object) {
   return request({
     url: '/User/DeleteUser',
     method: 'get',
@@ -23,7 +23,7 @@ export function deleteUser(params: object) {
   })
 }
 
-export function updateUser(params: object) {
+export function updateUserAPI(params: object) {
   return request({
     url: '/User/UpdateUser',
     method: 'PUT',
@@ -31,7 +31,7 @@ export function updateUser(params: object) {
   })
 }
 
-export function insertUser(params: object) {
+export function insertUserAPI(params: object) {
   return request({
     url: '/User/InsertUser',
     method: 'PUT',

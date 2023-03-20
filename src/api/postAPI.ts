@@ -7,3 +7,12 @@ export function PostSelectAllAPI(params: object) {
     params
   })
 }
+
+
+export function PostSelectAPI(params: object) {
+  return request({
+    url: '/Post/SelectPageAll',
+    method: 'get',
+    params
+  })
+}
