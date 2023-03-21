@@ -2,7 +2,6 @@
   <el-row :gutter="20">
     <el-col :span="4" :xs="24">
   <el-input v-model="filterText" placeholder="Filter keyword" />
-
   <el-tree
     ref="treeRef"
     class="filter-tree"
@@ -15,15 +14,20 @@
 </el-col>
 
 <el-col :span="20" :xs="24">
-  <el-table :data="userList" style="width: 100%" v-loading="loading">
+  <div style="float: left;">
+  <el-button  @click="addUser()">
+        新增设备
+  </el-button>
+</div>
+  <el-table :data="userList" style="width: 100%" v-loading="loading" >
     <el-table-column prop="userId" label="用户id" width="100" />
     <el-table-column prop="userName" label="姓名" width="100" />
     <el-table-column prop="sex" label="性别" width="100"/>
     <el-table-column prop="phonenumber" label="手机" width="150"/>
     <el-table-column prop="dept.deptName" label="部门" width="100"/>
     <el-table-column prop="post.postName" label="岗位" width="100" />
-    <el-table-column prop="userPosition" label="位置" width="150" />
-    <el-table-column prop="status" label="状态"  >
+    <el-table-column prop="userPosition" label="位置" width="100" />
+    <el-table-column prop="status" label="状态" width="100" >
       <template #default="scope">
       <el-switch v-model="scope.row.status" 
       active-value="true"
@@ -32,7 +36,7 @@
       />
     </template>
     </el-table-column>
-    <el-table-column align="right">
+    <el-table-column  align="right" >
       <template #default="scope">
         <el-button size="small" @click="handleEdit(scope.$index, scope.row)" :icon="Edit" ></el-button>
         <el-button size="small" type="danger" @click="handleDelete(scope.row)" :icon="Delete"></el-button>
@@ -104,7 +108,7 @@ label-width="120px"
       <el-switch v-model="userFrom.status" />
     </el-form-item>
     <el-form-item label="定位">
-      <el-input v-model="userFrom.userName" />
+      <el-input v-model="userFrom.userPosition" />
     </el-form-item>
 
     <el-form-item label="备注">
@@ -329,6 +333,23 @@ const handleInfo = (index: number, row: any) => {
   
   changed(row.deptId)
 }
+//添加
+const addUser= () => {
+  dialogFormVisible.value=true
+  dialogFormVisible.value=true
+  infoFlag.value=false
+  userFrom.userName=undefined
+  userFrom.userId=undefined
+  userFrom.deptId=""
+  userFrom.postId=""
+  userFrom.status='true'
+  userFrom.sex=""
+  userFrom.idCard=""
+  userFrom.email=""
+  userFrom.addres=''
+  userFrom.phonenumber=undefined
+  userFrom.userPosition=''
+}
 
 const handleDelete=( row: any)=>{
   proxy.$msgbox.confirm('确认要删除'  + '"' + row.userName + '"用户吗?').then(function () {
@@ -349,7 +370,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     //添加
-    if (valid && userFrom.userId == '') {
+
+    console.log(userFrom);
+    
+    if (valid && userFrom.userId==undefined) {
       insertUserAPI(userFrom).then((res: any) => {
         dialogFormVisible.value = false
         proxy.$message.success('添加成功')
@@ -378,8 +402,10 @@ function handleStatusChange(row:any) {
   proxy.$msgbox.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
    updateUserAPI({userId:row.userId,status:row.status}).then((res: any) => {
       });
+    
   }).then(() => {
     proxy.$message.success(text + "成功");
+    getList()
     dialogFormVisible.value = false
   }).catch(function () {
     console.log(row.status,"bbb");

@@ -34,7 +34,7 @@ export function updateUserAPI(params: object) {
 export function insertUserAPI(params: object) {
   return request({
     url: '/User/InsertUser',
-    method: 'PUT',
+    method: 'POST',
     params
   })
 }
