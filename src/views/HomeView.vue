@@ -71,12 +71,12 @@
           </el-menu>
         </el-aside>
         <el-radio-group v-model="isCollapse" style="margin-bottom: 15px;display: block;">
-          <el-radio-button :label="false"><el-icon>
-              <ArrowRightBold />
-            </el-icon></el-radio-button>
-          <el-radio-button :label="true"><el-icon>
-              <ArrowLeftBold />
-            </el-icon></el-radio-button>
+          <div style="width: 25px;height: 25px; " :style="flgFlase" @click="handFalseClick()">
+            <el-icon  :size="25"><Expand /></el-icon>
+          </div>
+          <div style="width: 25px;height: 25px;"  :style="flgTrue" @click="handTrueClick()">
+            <el-icon  :size="25"><Fold /></el-icon>
+          </div>
         </el-radio-group>
         <!-- 左边菜单栏 结束-->
 
@@ -93,7 +93,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref ,reactive } from 'vue'
 import {
   Document,
   Menu as IconMenu,
@@ -105,9 +105,20 @@ import {
   ArrowLeftBold,
   Setting,
   ArrowRightBold,
+  Expand,
+  Fold
 } from '@element-plus/icons-vue'
 
 const isCollapse = ref(true)
+const flgFlase=reactive({
+  display:""
+})
+
+const flgTrue=reactive({
+  display:"none"
+})
+
+
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
 }
@@ -115,6 +126,16 @@ const handleClose = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
 }
 
+const handFalseClick=()=>{
+  isCollapse.value=false
+  flgFlase.display="none"
+  flgTrue.display=""
+}
+const handTrueClick=()=>{
+  isCollapse.value=true
+  flgTrue.display="none"
+  flgFlase.display=""
+}
 
 </script>
 

@@ -16,9 +16,10 @@
 <el-col :span="20" :xs="24">
   <div style="float: left;">
   <el-button  @click="addUser()">
-        新增设备
+        新增员工
   </el-button>
 </div>
+
   <el-table :data="userList" style="width: 100%" v-loading="loading" >
     <el-table-column prop="userId" label="用户id" width="100" />
     <el-table-column prop="userName" label="姓名" width="100" />
@@ -44,6 +45,11 @@
       </template>
     </el-table-column>
   </el-table>
+
+  <el-pagination :page-size=queryParams.pageNum :page-count="total" layout="prev, pager, next,total,jumper" :total="total"
+     v-model:current-page="queryParams.pageNum"
+    @current-change="handleCurrentChange" />
+    
 </el-col>
 </el-row>
 
@@ -190,6 +196,7 @@ const datas = reactive({
     postId: undefined,
   },
 });
+const total=ref()
 const { queryParams } = toRefs(datas);
 
 watch(filterText, (val) => {
@@ -234,15 +241,30 @@ DeptTree({}).then((res: any) => {
   });
 
 
+// // 分页
+// const nextClik = () => {
+//   queryParams.value.pageNum += 1
+//   getList()
+// }
+// const prevClik = () => {
+//   queryParams.value.pageNum -= 1
+//   getList()
+// }
+
+const handleCurrentChange = (val: number) => {
+  queryParams.value.pageNum = val
+  getList()
+}
+
   /** 查询用户列表 */
 function getList() {
   loading.value = true;
   userSelectPageAPI(queryParams.value).then(res => {
    
-    console.log(res.data.list);
+    console.log(res.data);
     console.log(queryParams.value,"query");
     userList.value = res.data.list;
-    // total.value = res.data.data.pages
+    total.value=res.data.pages
     loading.value = false;
   });
 };
@@ -354,14 +376,16 @@ const addUser= () => {
 const handleDelete=( row: any)=>{
   proxy.$msgbox.confirm('确认要删除'  + '"' + row.userName + '"用户吗?').then(function () {
     deleteUserAPI({userId:row.userId}).then((res: any) => {
+      getList()
       });
   }).then(() => {
     proxy.$message.success( "删除成功");
     dialogFormVisible.value = false
-    getList()
+    
   }).catch(function () {
 
   });
+
   console.log(row);
 }
 
