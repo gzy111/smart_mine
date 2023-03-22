@@ -20,7 +20,7 @@
 
                 <router-link to="/userinfo"><el-menu-item index="/userinfo">员工管理</el-menu-item></router-link>
                 <router-link to="/DeptView"><el-menu-item index="/DeptView">部门管理</el-menu-item></router-link>
-                <el-menu-item index="1-3">岗位管理</el-menu-item>
+                <router-link to="/PostView"><el-menu-item index="/PostView">岗位管理</el-menu-item></router-link>
               </el-menu-item-group>
             </el-sub-menu>
             <el-sub-menu index="2">
@@ -171,5 +171,9 @@ const handTrueClick=()=>{
   line-height: 60px;
   font-weight: 900;
   font-size: 2em;
-  background-color: rgb(1 17 70);
-}</style>
+  color: #fdfdfd;
+  background-color: rgb(34, 61, 151);
+}
+
+
+</style>

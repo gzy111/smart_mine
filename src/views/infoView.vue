@@ -1,55 +1,45 @@
 <template>
+
   <el-form :model="userFrom" label-width="120px">
-    <el-form-item label="员工ID">
+    <el-row>
+      <el-col :span="12">
+    <el-form-item label="部门ID">
       <el-input v-model="userFrom.userId" :disabled="true" />
     </el-form-item>
-    <el-form-item label="员工姓名">
+    </el-col>
+
+    <el-col :span="12">
+    <el-form-item label="部门名称">
       <el-input v-model="userFrom.userName" />
     </el-form-item>
-
-    <el-form-item label="性别">
-      <el-radio-group v-model="userFrom.sex">
-        <el-radio label="男" />
-        <el-radio label="女" />
-      </el-radio-group>
-    </el-form-item>
-
-    <el-form-item label="家庭住址">
-      <el-input v-model="userFrom.addres" />
-    </el-form-item>
-
-    <el-form-item label="邮箱">
-      <el-input v-model="userFrom.email" />
-    </el-form-item>
-
-    <el-form-item label="手机号码">
+  </el-col>
+  </el-row>
+  <el-row>
+    <el-col :span="12">
+      <el-form-item label="邮箱">
       <el-input v-model="userFrom.phonenumber" />
     </el-form-item>
-
-    <el-form-item label="身份证">
-      <el-input v-model="userFrom.idCard" />
+  </el-col>
+  <el-col :span="12">
+    <el-form-item label="手机号码">
+      <el-input v-model="userFrom.email" />
     </el-form-item>
-
-    <el-form-item label="部门">
-      <el-select v-model="userFrom.deptId" placeholder="please select your zone" filterable @change="changed">
-        <el-option v-for="item in toRaw(deptList)" :key="item" :label="item.deptName" :value="item.deptId" />
-      </el-select>
+  </el-col>
+  </el-row>
+   
+    <el-form-item label="负责人"  >
+      <el-select v-model="userFrom.userName" placeholder="请选择员工" filterable clearable >
+        <el-option      
+          v-for="item in toRaw(userList)"
+          :key="item"
+          :label="item.userId+','+item.userName"
+          :value="item.userId+','+item.userName" />
+          </el-select>
+      
     </el-form-item>
-
-    <el-form-item label="岗位">
-      <el-select v-model="userFrom.postName" placeholder="please select your zone">
-        <el-option v-for="item in toRaw(postList)" :key="item" :label="item.postName" :value="item.postId" />
-      </el-select>
-    </el-form-item>
-
-
     <el-form-item label="状态">
       <el-switch v-model="userFrom.status" />
     </el-form-item>
-    <el-form-item label="定位">
-      <el-input v-model="userFrom.userName" />
-    </el-form-item>
-
     <el-form-item label="备注">
       <el-input v-model="userFrom.remark" type="textarea" />
     </el-form-item>
@@ -58,6 +48,7 @@
       <el-button>Cancel</el-button>
     </el-form-item>
   </el-form>
+
 </template>
   
 <script lang="ts" setup>
@@ -65,7 +56,7 @@ import { tr } from 'element-plus/es/locale';
 import { ref, reactive, toRaw, getCurrentInstance } from 'vue'
 import { DeptSelectAllAPI } from '../api/deptAPI'
 import { PostSelectAPI } from '../api/postAPI'
-import { updateUserAPI, insertUserAPI } from '../api/userAPI'
+import { updateUserAPI, insertUserAPI,userSelectAllAPI } from '../api/userAPI'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const userFrom = reactive({
@@ -82,6 +73,12 @@ const userFrom = reactive({
   userPosition: '',
   remark: '',
 })
+const userList=ref([])
+userSelectAllAPI({ }).then((res: any) => {
+    userList.value = res.data.data    
+    console.log(res.data.data ,"s");
+  });
+
 const { proxy } = getCurrentInstance()
 /**
  * 弹窗

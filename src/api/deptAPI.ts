@@ -16,3 +16,34 @@ export function DeptTree(params: object) {
   })
 }
 
+export function DeptSelectPage(params: object) {
+  return request({
+    url: 'Dept/SelectPage',
+    method: 'get',
+    params
+  })
+}
+
+export function DeptInset(params: object) {
+  return request({
+    url: 'Dept/InsertSelective',
+    method: 'POST',
+    params
+  })
+}
+
+export function DeptUpdate(params: object) {
+  return request({
+    url: 'Dept/UpdateBySelective',
+    method: 'PUT',
+    params
+  })
+}
+
+export function DeptDelete(params: object) {
+  return request({
+    url: 'Dept/DeleteByCode',
+    method: 'get',
+    params
+  })
+}

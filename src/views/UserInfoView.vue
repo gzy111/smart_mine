@@ -135,7 +135,7 @@ import { ref, watch ,toRaw , toRef,reactive,toRefs,getCurrentInstance,onMounted}
 import { ElTree } from 'element-plus'
 import{DeptSelectAllAPI,DeptTree} from "../api/deptAPI"
 import{userSelectPageAPI} from "../api/userAPI"
-import { PostSelectAPI } from '../api/postAPI'
+import { PostSelectAllAPI } from '../api/postAPI'
 import { updateUserAPI, insertUserAPI ,deleteUserAPI} from '../api/userAPI'
 import type { FormInstance, FormRules } from 'element-plus'
 import { Delete, Edit, Search, Share, Upload, User } from '@element-plus/icons-vue'
@@ -241,15 +241,7 @@ DeptTree({}).then((res: any) => {
   });
 
 
-// // 分页
-// const nextClik = () => {
-//   queryParams.value.pageNum += 1
-//   getList()
-// }
-// const prevClik = () => {
-//   queryParams.value.pageNum -= 1
-//   getList()
-// }
+
 
 const handleCurrentChange = (val: number) => {
   queryParams.value.pageNum = val
@@ -262,7 +254,6 @@ function getList() {
   userSelectPageAPI(queryParams.value).then(res => {
    
     console.log(res.data);
-    console.log(queryParams.value,"query");
     userList.value = res.data.list;
     total.value=res.data.pages
     loading.value = false;
@@ -271,7 +262,7 @@ function getList() {
 
 //选择器改变事件
 function changed(val: any) {
-  PostSelectAPI({ deptId: val }).then((res: any) => {
+  PostSelectAllAPI({ deptId: val }).then((res: any) => {
     postList.value = res.data.list
     console.log(postList,"post");
   });
@@ -355,9 +346,9 @@ const handleInfo = (index: number, row: any) => {
   
   changed(row.deptId)
 }
+
 //添加
 const addUser= () => {
-  dialogFormVisible.value=true
   dialogFormVisible.value=true
   infoFlag.value=false
   userFrom.userName=undefined
@@ -425,11 +416,10 @@ function handleStatusChange(row:any) {
   let text = row.status == "true" ? "启用" : "停用";
   proxy.$msgbox.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
    updateUserAPI({userId:row.userId,status:row.status}).then((res: any) => {
+    getList()
       });
-    
   }).then(() => {
     proxy.$message.success(text + "成功");
-    getList()
     dialogFormVisible.value = false
   }).catch(function () {
     console.log(row.status,"bbb");

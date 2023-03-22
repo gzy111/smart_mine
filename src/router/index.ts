@@ -4,6 +4,7 @@ import UserInfoViewVue from '../views/UserInfoView.vue'
 import EquipmentView from '../views/EquipmentView.vue'
 import DeptView from '../views/DeptView.vue'
 import infoView from '../views/infoView.vue'
+import PostView from '../views/PostView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -31,7 +32,12 @@ const routes: Array<RouteRecordRaw> = [
       path: '/infoView',
       name: 'infoView',
       component: infoView
-  },
+    },
+    {
+      path: '/PostView',
+      name: 'PostView',
+      component: PostView
+    },
     ]
   },
 
