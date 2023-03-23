@@ -22,8 +22,14 @@
     </el-table-column>
     <el-table-column align="right">
       <template #default="scope">
-        <el-button size="small" @click="handleEdit(scope.$index, scope.row)" type="warning">编辑</el-button>
+        <el-button size="small" @click="handleEdit(scope.$index, scope.row)" >编辑</el-button>
         <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+        <el-tooltip
+        class="box-item"
+        effect="light"
+        content="报修"
+        placement="bottom-end"
+      > <el-button size="small" type="warning"  @click="handleRepair(scope.$index, scope.row)"><el-icon><Warning /></el-icon></el-button></el-tooltip>
       </template>
     </el-table-column>
   </el-table>
@@ -59,10 +65,10 @@
     </el-form-item>
 
     <el-form-item label="设备状态"  prop="state">
-      <el-select v-model="ruleForm.state" placeholder="请选择设备状态">
+      <el-select v-model="ruleForm.state" placeholder="请选择设备状态" :disabled="repairFlg(ruleForm.state)">
         <el-option label="运行" value="1" />
         <el-option label="停用" value="0" />
-        <el-option label="维修" value="2" />
+        <el-option label="维修" value="2" :disabled="true"  />
       </el-select>
     </el-form-item>
 
@@ -88,6 +94,35 @@
    
   </el-dialog>
 <!-- ----------------------弹窗------------------------------------------------------------------->
+
+<!-- ---------------------------弹窗2 ------------------------------------------------------------>
+<el-dialog v-model="dialogFormVisible2" title="设备故障" align-center destroy-on-close width="23%">
+
+<el-form
+  ref="ruleFormRef"
+  :model="repairFrom"
+  :rules="rules"
+  label-width="120px"
+  class="demo-ruleForm"
+  :size="formSize"
+  status-icon
+>
+  <el-form-item label="设备ID" prop="equipmentCode" >
+    <el-input v-model="repairFrom.equipmentCode"  style="width: 214px;" disabled="true"/>
+  </el-form-item>
+  <el-form-item label="故障信息">
+      <el-input v-model="repairFrom.errorInfo" autosize type="textarea" />
+    </el-form-item>
+  <el-form-item>
+    <el-button type="primary" @click="submitRepairForm(ruleFormRef)" :plain="true" >
+      提交
+    </el-button>
+    <el-button @click="resetForm(ruleFormRef)">取消</el-button>
+  </el-form-item>
+</el-form>
+ 
+</el-dialog>
+<!-- ----------------------弹窗2------------------------------------------------------------------->
 </template>
   
 <script lang="ts" setup>
@@ -95,8 +130,12 @@ import { computed, ref, onMounted, reactive, toRaw, shallowReactive, onBeforeMou
 import { selectAllAPI, deleteAPI ,inserAPI,equipmentUpdateAPI} from "../api/equipmentAPI"
 
 import type { FormInstance, FormRules ,ElMessage} from 'element-plus'
+import { Delete, Edit, Search, Share, Warning } from '@element-plus/icons-vue'
 import {lookSelectAPI} from "../api/lookupAPI"
 import{userSelectAllAPI} from "../api/userAPI"
+import{RepairInsertAPI} from "../api/repairAPI"
+import { fa } from 'element-plus/es/locale'
+import { update } from 'lodash'
 
 
 interface equipment {
@@ -115,7 +154,7 @@ const pageSize = ref(10);
 const total = ref(0)
 const pageCount = ref(0)
 const currentPage = ref(1);
-
+const dialogFormVisible2 = ref(false)
 
 const loading = ref(false)
 const info = ref<equipment>()
@@ -128,6 +167,12 @@ const ruleForm = reactive({
   equipmentType: '',
   equipmentUser: '',
   state:''
+})
+
+const repairFrom=reactive({
+  equipmentCode: '',
+  state:'',
+  errorInfo:'',
 })
 
 interface lookEquipment {
@@ -171,6 +216,17 @@ const handleDelete = (index: number, row: equipment) => {
   })
 }
 
+
+//点击报修按钮，内容添加到弹出框
+const handleRepair = (index: number, row: equipment) => {
+  dialogFormVisible2.value=true
+  repairFrom.equipmentCode=row.equipmentCode
+  repairFrom.state='1'
+  repairFrom.errorInfo=''
+}
+
+
+
 const handleCurrentChange = (val: number) => {
   currentPage.value = val
   list()
@@ -209,7 +265,14 @@ function tagFlg(tag: string) {
 }
 list()
 
-
+//当维修时,状态不可以改变
+function repairFlg(state:string){
+  if(state=='2'){
+    return true
+  }else{
+    return false
+  }
+}
 
 
 /**
@@ -283,6 +346,31 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   })
 }
 
+
+
+//提交报修表单
+const submitRepairForm = async (formEl: FormInstance | undefined) => {
+if (!formEl) return
+await formEl.validate((valid, fields) => {
+  //添加
+  if (valid) {
+  RepairInsertAPI( repairFrom ).then((res: any) => {
+    equipmentUpdateAPI({equipmentCode:repairFrom.equipmentCode,state:'2'}).then((res: any) => {
+ 
+      console.log(res);
+    })
+
+    dialogFormVisible2.value=false
+      proxy.$message.success('添加成功')
+    list()
+  });
+  }else{
+    console.log('error');
+    proxy.$message.error('出现异常')
+  }
+
+})
+}
 
 
 //重置表单

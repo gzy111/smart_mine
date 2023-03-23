@@ -23,18 +23,16 @@
                 <router-link to="/PostView"><el-menu-item index="/PostView">岗位管理</el-menu-item></router-link>
               </el-menu-item-group>
             </el-sub-menu>
-            <el-sub-menu index="2">
-              <template #title>
-                <el-icon>
+            <router-link to="/RepairView">
+            <el-menu-item index="/RepairView">
+              <el-icon>
                   <Notebook />
                 </el-icon>
-                <span>日志管理</span>
+              <template #title>
+                <span>设备维修</span>
               </template>
-              <el-menu-item-group>
-                <el-menu-item index="2-1">登录日志</el-menu-item>
-                <el-menu-item index="2-2">操作日志</el-menu-item>
-              </el-menu-item-group>
-            </el-sub-menu>
+            </el-menu-item>
+            </router-link>
 
             <router-link to="/equipment">
               <el-menu-item index="/equipment">
@@ -175,5 +173,7 @@ const handTrueClick=()=>{
   background-color: rgb(34, 61, 151);
 }
 
-
+.left_menu{
+  background-color: rgb(255, 255, 255);
+}
 </style>

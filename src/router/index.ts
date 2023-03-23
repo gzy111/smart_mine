@@ -5,6 +5,7 @@ import EquipmentView from '../views/EquipmentView.vue'
 import DeptView from '../views/DeptView.vue'
 import infoView from '../views/infoView.vue'
 import PostView from '../views/PostView.vue'
+import RepairView from '../views/RepairView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -37,6 +38,11 @@ const routes: Array<RouteRecordRaw> = [
       path: '/PostView',
       name: 'PostView',
       component: PostView
+    },
+    {
+      path: '/RepairView',
+      name: 'RepairView',
+      component: RepairView
     },
     ]
   },
