@@ -135,7 +135,7 @@ import { ref, watch ,toRaw , toRef,reactive,toRefs,getCurrentInstance,onMounted}
 import { ElTree } from 'element-plus'
 import{DeptSelectAllAPI,DeptTree} from "../api/deptAPI"
 import{userSelectPageAPI} from "../api/userAPI"
-import { PostSelectAllAPI } from '../api/postAPI'
+import { PostSelectAPI } from '../api/postAPI'
 import { updateUserAPI, insertUserAPI ,deleteUserAPI} from '../api/userAPI'
 import type { FormInstance, FormRules } from 'element-plus'
 import { Delete, Edit, Search, Share, Upload, User } from '@element-plus/icons-vue'
@@ -262,9 +262,9 @@ function getList() {
 
 //选择器改变事件
 function changed(val: any) {
-  PostSelectAllAPI({ deptId: val }).then((res: any) => {
+  PostSelectAPI({ deptId: val }).then((res: any) => {
     postList.value = res.data.list
-    console.log(postList,"post");
+    console.log(res,"post");
   });
 }
 

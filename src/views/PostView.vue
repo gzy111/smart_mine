@@ -182,7 +182,7 @@ const data: Tree[] = [
 
 //获取岗位
 function getPostList(){
-    PostSelectAPI(queryParams.value).then((res: any) => {
+  PostSelectAPI(queryParams.value).then((res: any) => {
         postList.value = res.data.list
         total.value=res.data.pages
     console.log(postList,"post");
