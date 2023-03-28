@@ -6,6 +6,7 @@ import DeptView from '../views/DeptView.vue'
 import infoView from '../views/infoView.vue'
 import PostView from '../views/PostView.vue'
 import RepairView from '../views/RepairView.vue'
+import productionInfoView from '../views/productionInfoView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -43,6 +44,11 @@ const routes: Array<RouteRecordRaw> = [
       path: '/RepairView',
       name: 'RepairView',
       component: RepairView
+    },
+    {
+      path: '/productionInfoView',
+      name: 'productionInfoView',
+      component: productionInfoView
     },
     ]
   },

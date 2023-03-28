@@ -11,7 +11,6 @@ const service = axios.create({
 // console.log(import.meta.env);
 
 
-
 // 请求前置拦截器
 service.interceptors.request.use((config) => {
   if (config.method === 'post' && !config.data) {

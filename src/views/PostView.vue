@@ -265,7 +265,7 @@ const handleCurrentChange = (val: number) => {
 function handleStatusChange(row:any) {
   let text = row.status == "true" ? "启用" : "停用";
   proxy.$msgbox.confirm('确认要"' + text + '""' + row.postName + '"岗位吗?').then(function () {
-    // console.log(row,"sss");
+    console.log(row,"sss");
     PostUpdateAPI({postId:row.postId,status:row.status}).then((res: any) => {
       getPostList()
       });

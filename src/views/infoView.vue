@@ -1,13 +1,4 @@
 <template>
-  <el-upload :action="uploadUrl" :on-success="handleUploadSuccess" :before-upload="beforeUpload" :headers="headers"
-    :data="uploadData" :multiple="false" :file-list="fileList">
-    <el-button type="primary">点击上传</el-button>
-  </el-upload>
-  <div style="height: 200px;width: 200px;display: block;background-color: aqua;">
-    <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-  </div>
-
-
   <el-upload
   :action="uploadUrl"
   :on-success="handleUploadSuccess"
@@ -24,31 +15,25 @@
   <div class="upload-text">上传文件</div>
 
 </el-upload>
+
+<template v-for="item in toRefs(dlist)" :key="item">
+  <li><a :href="item.value.documentUrl">{{ item.value.id }}</a></li>
+</template>
+<a href="http://localhost:80/File/download?name=/2023-03-28/附件1.河池市2023年事业单位公开招聘工作人员岗位表2023.3.15.xls">下载</a>
 </template>
 
 <script lang="ts" setup >
-import { computed, ref, reactive, toRaw, getCurrentInstance } from 'vue'
+import { computed, ref, reactive, toRaw, getCurrentInstance ,toRefs} from 'vue'
+import{DocumentListAPI,DocumentDownAPI} from '../api/upload'
 const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + '/File/UploadImage')
-const imageUrl = ref('http://127.0.0.1:80/2023-03-27/房屋出租.jpg')
+
 const fileUrl=ref('')
 const { proxy } = getCurrentInstance()
-const beforeUpload = (file) => {
-  // 对上传的文件进行验证
-  const isJpg = file.type === 'image/jpeg'
-  const isLt2M = file.size / 1024 / 1024 < 2
-  if (!isJpg) {
-    proxy.$message.error('上传头像图片只能是 JPG 格式!')
-  }
-  if (!isLt2M) {
-    proxy.$message.error('上传头像图片大小不能超过 2MB!')
-  }
-  return isJpg && isLt2M
-}
+
 const handleUploadSuccess = (response) => {
   // 上传成功后的处理
   proxy.$message.success('上传成功')
   console.log(response);
-  imageUrl.value = response
 
 }
 
@@ -56,7 +41,8 @@ const beforeUpload2 = (file: File) => {
   const fileTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
   const fileType = file.type
   const isLt2M = file.size / 1024 / 1024 < 10
-
+  console.log(file);
+  
   if (!fileTypes.includes(fileType)) {
     proxy.$message.error('上传文件只能是 PDF、Word 或 Excel 格式!')
   }
@@ -71,7 +57,30 @@ const handleUploadSuccess2 = (response) => {
   console.log(response);
   fileUrl.value = response
 }
+const dlist=ref([])
+const info=ref([])
+function documentList() {
+  DocumentListAPI({}).then((res: any) => {
+    for (const key in res.data) {
+        let re=reactive({
+            id:'',
+            label:''
+        })
+        re.id=res.data[key].deptId
+        re.label=res.data[key].deptName
+        info.value.push(re)
+    }
 
+  });
+}
+documentList()
+console.log(dlist);
+
+function documentDown() {
+  DocumentDownAPI({name:"房屋出租.jpg",isOnline:0}).then((res: any) => {
+    console.log(res);
+  });
+}
 
 </script>
 <style>

@@ -49,13 +49,15 @@
               </el-icon>
               <template #title>环境监测</template>
             </el-menu-item>
-
-            <el-menu-item index="5">
+            
+            <router-link to="/productionInfoView">
+            <el-menu-item index="/productionInfoView">
               <el-icon>
                 <setting />
               </el-icon>
               <template #title>生产信息</template>
             </el-menu-item>
+            </router-link>
 
             <router-link to="/infoView">
             <el-menu-item index="/infoView">

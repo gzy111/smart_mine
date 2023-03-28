@@ -6,3 +6,21 @@ export function upload(params: object) {
       params
     })
   }
+
+  export function DocumentListAPI(params: object) {
+    return request({
+      url: '/File/DocumentList',
+      method: 'get',
+      params
+    })
+  }
+
+  export function DocumentDownAPI(params: object) {
+    return request({
+      url: '/File/download',
+      method: 'get',
+      params
+    })
+  }
+
+  
