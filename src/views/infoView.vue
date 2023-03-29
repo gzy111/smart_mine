@@ -3,8 +3,6 @@
   :action="uploadUrl"
   :on-success="handleUploadSuccess"
   :before-upload="beforeUpload2"
-  :headers="headers"
-  :data="uploadData"
   :multiple="false"
   :file-list="fileList"
   accept=".pdf,.doc,.docx,.xls,.xlsx"
@@ -13,7 +11,6 @@
 >
   <i class="el-icon-plus"></i>
   <div class="upload-text">上传文件</div>
-
 </el-upload>
 
 <template v-for="item in toRefs(dlist)" :key="item">

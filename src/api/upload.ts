@@ -17,7 +17,15 @@ export function upload(params: object) {
 
   export function DocumentDownAPI(params: object) {
     return request({
-      url: '/File/download',
+      url: '/File/downloadFile',
+      method: 'get',
+      params
+    })
+  }
+
+  export function DocumentDeleteAPI(params: object) {
+    return request({
+      url: '/File/delete',
       method: 'get',
       params
     })
