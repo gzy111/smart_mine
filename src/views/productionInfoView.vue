@@ -32,16 +32,16 @@ const config = {
   }
 };
 
-const appCode = 'a165ea84682348e9ba1f5163cc19828f'; // 替换成你的阿里云应用程序代码
+// const appCode = 'a165ea84682348e9ba1f5163cc19828f'; // 替换成你的阿里云应用程序代码
 
-axios.post(apiUrl, formData, {
-  headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    Authorization: `APPCODE ${appCode}`,
-  },
-}).then(response => {
-  console.log(response.data);
-});
+// axios.post(apiUrl, formData, {
+//   headers: {
+//     'Content-Type': 'application/x-www-form-urlencoded',
+//     Authorization: `APPCODE ${appCode}`,
+//   },
+// }).then(response => {
+//   console.log(response.data);
+// });
 
 
 
@@ -55,7 +55,6 @@ const weather = ref('') // 定义天气变量
 const position= ref('')
     // 获取城市信息
     onMounted(()=>{
-
        AMapLoader.load(options).then((AMap) => {
       const geolocation = new AMap.Geolocation({
         enableHighAccuracy: true,
@@ -69,6 +68,8 @@ const position= ref('')
           console.log('城市查询成功：', city)
           getWeather()
         } else {
+          city.value="苏州"
+          getWeather()
           console.log('城市查询失败：', result)
         }
       })
@@ -91,7 +92,7 @@ const position= ref('')
         .get(
           'https://restapi.amap.com/v3/weather/weatherInfo?city=' +
             city.value +
-            '&key=05c5400c7a3d5ecd76586cc564182514'
+            '&key=05c5400c7a3d5ecd76586cc564182514&extensions=base'
         )
         .then((res) => {
           weather.value = res.data // 将请求返回的天气信息赋值给 weather 变量

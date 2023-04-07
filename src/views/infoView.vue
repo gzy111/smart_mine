@@ -30,33 +30,13 @@
             <el-icon><Delete /></el-icon>
           </span>
         </span>
-        <!-- <div style="height: 20%;">
-          <span
-            :title="file.name" 
-            class=".ellipsis">
-            {{ file.name }}
-            </span>
-        </div> -->
+
         <div slot="tip">
           {{ file.name }}
         </div>
       </div>
     </template>
-<!--  
-    <div class="doc-menu">
-  <template v-for="(file, index) in info" :key="file">
-      <div class="big-card">
-        <div class="card">
-          <img :src="file.url" alt="">
-        </div>
-        <div class="card-title">
-          <span title="CSS 测试标题，这是一个稍微有点长的标题，超出一行以后才会有title提示，标题是 实现优惠券的技巧 - 2021-03-26" class="branch_name_front">
-            CSS 测试标题，这是一个稍微有点长的标题，超出一行以后才会有title提示，标题是 实现优惠券的技巧 - 2021-03-26
-          </span>
-        </div>
-      </div>
-    </template>
-  </div>   -->
+
   </el-upload>
   <el-dialog v-model="dialogVisible">
     <img w-full :src="dialogImageUrl" alt="Preview Image" />

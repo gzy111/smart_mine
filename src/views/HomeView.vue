@@ -43,13 +43,16 @@
               </el-menu-item>
             </router-link>
             
-            <el-menu-item index="4">
+            <router-link to="/measureView">
+
+            <el-menu-item index="/measureView">
               <el-icon>
                 <WindPower />
               </el-icon>
               <template #title>环境监测</template>
             </el-menu-item>
-            
+          </router-link>
+
             <router-link to="/productionInfoView">
             <el-menu-item index="/productionInfoView">
               <el-icon>

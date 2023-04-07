@@ -8,6 +8,7 @@ import PostView from '../views/PostView.vue'
 import RepairView from '../views/RepairView.vue'
 import productionInfoView from '../views/productionInfoView.vue'
 import testVue from '../views/test.vue'
+import measureView from '../views/measureView.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -53,10 +54,16 @@ const routes: Array<RouteRecordRaw> = [
       component: productionInfoView
     },
     {
+      path: '/measureView',
+      name: 'measureView',
+      component: measureView
+    },
+    {
       path: '/testVue',
       name: 'testVue',
       component: testVue
-    },
+    }
+
     ]
   },
 
