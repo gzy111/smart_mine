@@ -14,7 +14,7 @@ import AMapLoader from '@amap/amap-jsapi-loader'
 import { computed, ref, reactive, toRaw, getCurrentInstance, toRefs,onMounted } from 'vue'
 const appKey = '204175383'; // 替换成你的阿里云应用程序密钥
 const appSecret = 'mFlZ4jwK0loDeFpt50ZiGNttOgUtSATp'; // 替换成你的阿里云应用程序密钥
-const apiUrl = 'http://aliv8.data.moji.com/whapi/json/aliweather/forecast15days'; // 替换成你的阿里云 API 网关 URL
+const apiUrl = 'http://aliv8.data.moji.com/whapi/json/aliweather/forecast24hours'; // 替换成你的阿里云 API 网关 URL
 const params = {
   // 替换成你的 API 参数
   'lat': '22.78133333',
