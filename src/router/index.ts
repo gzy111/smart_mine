@@ -9,6 +9,7 @@ import RepairView from '../views/RepairView.vue'
 import productionInfoView from '../views/productionInfoView.vue'
 import testVue from '../views/test.vue'
 import measureView from '../views/measureView.vue'
+import login from '../views/login.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -66,7 +67,11 @@ const routes: Array<RouteRecordRaw> = [
 
     ]
   },
-
+  {
+    path: '/login',
+    name: 'login',
+    component: login,
+  },
 
 ]
 
