@@ -26,7 +26,7 @@
                     <label class="form-check-label" for="exampleCheck1">管理员</label>
                 </div>
                 <button class="btn btn-primary" @click="submit">登陆</button>
-                <button class="btn btn-primary" v-show="adminFlg">获取验证码</button>
+                <button class="btn btn-primary" v-show="adminFlg" @click="getSMCode" :disabled="disabled">获取验证码</button>
             </form>
 
         </div>
@@ -37,19 +37,52 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, reactive, toRaw, getCurrentInstance, toRefs } from 'vue'
-import{login} from '../api/loginAPI'
+import{login,getCode} from '../api/loginAPI'
+import router from '../router';
+import { Timer } from '@element-plus/icons-vue';
 const loginName=ref('')
 const loginPassword=ref('')
 const adminFlg=ref('')
 const passCode=ref('')
+const disabled=ref(false);
+const loginReq=reactive({
+    userId:'',
+    password:'',
+    adminFlg:'',
+    passCode:''
+})
+
+
 
 const submit=(()=>{
-    login({userId:loginName.value,password:loginPassword.value}).then((res: any) => {
-        console.log(res);
-    })
+        loginReq.userId=loginName.value
+        loginReq.adminFlg=adminFlg.value
+        loginReq.password=loginPassword.value
+        loginReq.passCode=passCode.value
+        login(loginReq).then((res: any) => {
+            let userinfo=res.data.data;
+            console.log(res.data.data);
+            if(res.data.code=200){
+                sessionStorage.setItem("userinfo",JSON.stringify(userinfo))
+            sessionStorage.setItem("token",res.data.token)
+                router.push("/")
+            }
+        })
 
 })
 
+const getSMCode=(()=>{
+    disabled.value=true
+    getCode({userId:loginName.value}).then(()=>{
+        
+    })
+    setTimeout(function(){
+        disabled.value=false
+        console.log("time");
+        
+    },60*1000)
+    // disabled.value=false
+})
 
 
 

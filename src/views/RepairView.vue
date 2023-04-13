@@ -1,20 +1,12 @@
 <template>
   <div id="repair_main">
     <div class="top">
-      <div class="top_div">
 
-      </div>
-      <div class="top_div">
-
-      </div>
-      <div class="top_div">
-        
-      </div>
 
     </div>
     <div class="form_div">
       <el-row>
-        <el-form :inline="true" :model="queryParams" ref="ruleFormRef" class="demo-form-inline">
+        <el-form :inline="true" :model="queryParams" ref="ruleFormRef" class="demo-form-inline" style="margin: 0 0;">
           <el-row>
             <el-form-item label="维修编号">
               <el-input v-model="queryParams.repairCode" placeholder="维修编号" />
@@ -321,13 +313,6 @@ const handleDelete = (row: any) => {
   line-height: 100px;
 }
 
-.top_div {
-  float: left;
-  width: 33.3%;
-  height: 60px;
 
-  box-sizing: border-box;
-  border-right: 2px solid;
-}
 </style>
   

@@ -1,3 +1,4 @@
+import router from '../router';
 import axios from 'axios'
 import { useStore } from "vuex";
 const store = useStore()
@@ -29,9 +30,19 @@ service.interceptors.request.use((config) => {
 
 // 响应前置拦截器
 service.interceptors.response.use((res) => {
+  let errMsg = ''
+  if (res.data.code=='401'){
+    router.push("/login")
+    errMsg = '权限校验错误'
+    return Promise.reject(errMsg)
+  }
+  console.log(res,'res');
   return Promise.resolve(res)
+
 }, (error) => {
   let errMsg = ''
+  console.log(error,'error');
+
   if (error && error.response) {
     switch (error.response.status) {
       case 400:
@@ -41,6 +52,7 @@ service.interceptors.response.use((res) => {
         errMsg = '服务器端出错'
         break
       case 401:
+        router.push("/login")
         errMsg = '权限校验错误'
         break
       default:

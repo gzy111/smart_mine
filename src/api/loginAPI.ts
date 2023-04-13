@@ -6,4 +6,11 @@ export function login(params: object) {
       params
     })
   }
+  export function getCode(params: object) {
+    return request({
+      url: '/login/getCode',
+      method: 'get',
+      params
+    })
+  }
   
