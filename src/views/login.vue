@@ -25,8 +25,8 @@
                     <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="adminFlg">
                     <label class="form-check-label" for="exampleCheck1">管理员</label>
                 </div>
-                <button type="submit" class="btn btn-primary">登陆</button>
-                <button type="submit" class="btn btn-primary" v-show="adminFlg">获取验证码</button>
+                <button class="btn btn-primary" @click="submit">登陆</button>
+                <button class="btn btn-primary" v-show="adminFlg">获取验证码</button>
             </form>
 
         </div>
@@ -37,15 +37,20 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, reactive, toRaw, getCurrentInstance, toRefs } from 'vue'
-import type { UploadProps, UploadUserFile } from 'element-plus'
-import { DocumentListAPI, DocumentDownAPI, DocumentDeleteAPI } from '../api/upload'
-import type { UploadFile } from 'element-plus'
-import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
-
+import{login} from '../api/loginAPI'
 const loginName=ref('')
 const loginPassword=ref('')
 const adminFlg=ref('')
 const passCode=ref('')
+
+const submit=(()=>{
+    login({userId:loginName.value,password:loginPassword.value}).then((res: any) => {
+        console.log(res);
+    })
+
+})
+
+
 
 
 </script>

@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { useStore } from "vuex";
+const store = useStore()
 let url: any = import.meta.env // 配置不同环境的域名信息等
 const service = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API, // url = base url + request url
@@ -13,6 +15,9 @@ const service = axios.create({
 
 // 请求前置拦截器
 service.interceptors.request.use((config) => {
+
+  config.headers['token'] = sessionStorage.getItem('token')
+
   if (config.method === 'post' && !config.data) {
     config.data = config.params
     config.params = null
