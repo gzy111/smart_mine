@@ -1,47 +1,47 @@
 <template>
-    <el-row>
-        <el-col :span="4">
-            <el-statistic :value="null">
-            <template #default>
-            </template>
-            <template #title>
-                <div style="display: inline-flex; align-items: center">
-                当前城市
-                </div>
-            </template>
-            <template #suffix>{{ LiveWeather.city }}</template>
-        </el-statistic>
+  <el-row>
+    <el-col :span="4">
+      <el-statistic :value="null">
+        <template #default>
+        </template>
+        <template #title>
+          <div style="display: inline-flex; align-items: center">
+            当前城市
+          </div>
+        </template>
+        <template #suffix>{{ LiveWeather.city }}</template>
+      </el-statistic>
     </el-col>
     <el-col :span="4">
-        <el-statistic :value="null">
-            <template #default>
-            </template>
-            <template #title>
-                <div style="display: inline-flex; align-items: center">
-                当前风力
-                </div>
-            </template>
-            <template #suffix>{{ LiveWeather.windpower }}</template>
-        </el-statistic>
-    </el-col>
-
-
-    <el-col :span="4">
-    <el-statistic :value="null">
-  <template #default>
-  </template>
-  <template #title>
-    <div style="display: inline-flex; align-items: center">
-      当前天气
-    </div>
-  </template>
-  <template #suffix>{{ LiveWeather.weather }}</template>
-</el-statistic>
+      <el-statistic :value="null">
+        <template #default>
+        </template>
+        <template #title>
+          <div style="display: inline-flex; align-items: center">
+            当前风力
+          </div>
+        </template>
+        <template #suffix>{{ LiveWeather.windpower }}</template>
+      </el-statistic>
     </el-col>
 
 
     <el-col :span="4">
-      <el-statistic :value="LiveWeather.temperature_float" >
+      <el-statistic :value="null">
+        <template #default>
+        </template>
+        <template #title>
+          <div style="display: inline-flex; align-items: center">
+            当前天气
+          </div>
+        </template>
+        <template #suffix>{{ LiveWeather.weather }}</template>
+      </el-statistic>
+    </el-col>
+
+
+    <el-col :span="4">
+      <el-statistic :value="LiveWeather.temperature_float">
         <template #title>
           <div style="display: inline-flex; align-items: center">
             当前温度
@@ -70,30 +70,30 @@
   </el-row>
 
 
-<el-row>
+  <el-row>
     <el-col :span="8">
-    <div ref="airChartRef" style="width: 600px; height: 500px;"  class="grid-content ep-bg-purple"></div>
+      <div ref="airChartRef" style="width: 600px; height: 500px;" class="grid-content ep-bg-purple"></div>
     </el-col>
     <el-col :span="8">
-    <div ref="CoChartRef" style="width: 600px; height: 500px;"  class="grid-content ep-bg-purple"></div>
+      <div ref="CoChartRef" style="width: 600px; height: 500px;" class="grid-content ep-bg-purple"></div>
     </el-col>
     <el-col :span="8">
-    <div ref="CH4ChartRef" style="width: 600px; height: 500px;"  class="grid-content ep-bg-purple"></div>
+      <div ref="CH4ChartRef" style="width: 600px; height: 500px;" class="grid-content ep-bg-purple"></div>
     </el-col>
-</el-row>
-<el-row :gutter="30">
+  </el-row>
+  <el-row :gutter="30">
     <el-col :span="8">
-        <div ref="hoursChartRef" style="width: 90vw; height: 500px; "  class="grid-content ep-bg-purple"></div>
+      <div ref="hoursChartRef" style="width: 90vw; height: 500px; " class="grid-content ep-bg-purple"></div>
     </el-col>
-</el-row>
-<el-row :gutter="30">
+  </el-row>
+  <el-row :gutter="30">
     <el-col :span="8">
-        <div ref="weatherChart" style="width: 90vw; height: 500px; "  class="grid-content ep-bg-purple"></div>
+      <div ref="weatherChart" style="width: 90vw; height: 500px; " class="grid-content ep-bg-purple"></div>
     </el-col>
-</el-row>
+  </el-row>
 </template>
 <script setup lang="ts">
-import { onMounted, Ref, ref,toRefs,toRaw,toRef } from 'vue'
+import { onMounted, Ref, ref, toRefs, toRaw, toRef } from 'vue'
 import { ECharts, EChartsOption, init } from 'echarts'
 import AMapLoader from '@amap/amap-jsapi-loader'
 import axios from 'axios';
@@ -103,18 +103,18 @@ const weatherChart = ref<HTMLDivElement | null>(null);
 type EChartsOption = echarts.EChartsOption;
 
 let chart: ECharts;  //天气预报
-const wea:any=[[],[],[],[],[]]
-const date:any=[]
-const hoursWea:any=[[],[],[],[],[],[],[],[]]
+const wea: any = [[], [], [], [], []]
+const date: any = []
+const hoursWea: any = [[], [], [], [], [], [], [], []]
 
 //实况天气
-const LiveWeather=ref('')
+const LiveWeather = ref('')
 //天气预报
 const option: EChartsOption = {
-    title: {
+  title: {
     text: '天气预报'
   },
-    tooltip: {
+  tooltip: {
     trigger: 'axis',
     axisPointer: {
       type: 'cross',
@@ -171,9 +171,9 @@ const option: EChartsOption = {
           color: '#91CC75'
         }
       },
-      
+
     }
-    
+
   ],
   series: [
     {
@@ -199,8 +199,8 @@ const option: EChartsOption = {
         }
       },
       data: wea[0],
-      itemStyle:{
-        color:'#fd666d'
+      itemStyle: {
+        color: '#fd666d'
       }
     },
     {
@@ -213,8 +213,8 @@ const option: EChartsOption = {
         }
       },
       data: wea[1],
-      itemStyle:{
-        color:'#37a2da'
+      itemStyle: {
+        color: '#37a2da'
       }
     },
     {
@@ -230,17 +230,17 @@ const option: EChartsOption = {
       data: wea[3]
     },
   ]
-  };
+};
 
 
-  //24小时预报
-  const hoursChartRef = ref<HTMLDivElement | null>(null);
-let hoursChart: ECharts; 
+//24小时预报
+const hoursChartRef = ref<HTMLDivElement | null>(null);
+let hoursChart: ECharts;
 const hoursOption: EChartsOption = {
-    title: {
+  title: {
     text: '24小时天气预报'
   },
-    tooltip: {
+  tooltip: {
     trigger: 'axis',
     axisPointer: {
       type: 'cross',
@@ -297,9 +297,9 @@ const hoursOption: EChartsOption = {
           color: '#fd666d'
         }
       },
-      
+
     }
-    
+
   ],
   series: [
     {
@@ -323,8 +323,8 @@ const hoursOption: EChartsOption = {
         }
       },
       data: hoursWea[1],
-      itemStyle:{
-        color:'#fd666d'
+      itemStyle: {
+        color: '#fd666d'
       }
     },
 
@@ -358,7 +358,7 @@ const hoursOption: EChartsOption = {
       data: hoursWea[5]
     },
   ]
-  };
+};
 
 /** 空气 */
 const airChartRef = ref<HTMLDivElement | null>(null);
@@ -411,15 +411,15 @@ const gaugeData = [
   },
 ];
 
-const coData=[
+const coData = [
   {
     value: 0,
     name: '一氧化碳浓度(CO)'
-        
+
   }
 ]
-const airOption:EChartsOption={
-    series: [
+const airOption: EChartsOption = {
+  series: [
     {
       type: 'gauge',
       startAngle: 90,
@@ -475,9 +475,9 @@ const airOption:EChartsOption={
 
 /**CO */
 const CoChartRef = ref<HTMLDivElement | null>(null);
-let CoChart: ECharts; 
-const CoOption: EChartsOption= {
-    title: {
+let CoChart: ECharts;
+const CoOption: EChartsOption = {
+  title: {
     text: ''
   },
   series: [
@@ -533,9 +533,9 @@ const CoOption: EChartsOption= {
 
 /**瓦斯 */
 const CH4ChartRef = ref<HTMLDivElement | null>(null);
-let CH4Chart: ECharts; 
-const CH4Option: EChartsOption= {
-    title: {
+let CH4Chart: ECharts;
+const CH4Option: EChartsOption = {
+  title: {
     text: ''
   },
   series: [
@@ -595,25 +595,21 @@ const CH4Option: EChartsOption= {
   ]
 };
 
-
-
-
 const initChart = () => {
   chart.setOption(option);
   airChart.setOption(airOption);
   CoChart.setOption(CoOption);
   CH4Chart.setOption(CH4Option);
   hoursChart.setOption(hoursOption);
-  
-}
 
+}
 
 onMounted(() => {
   chart = init(weatherChart.value as HTMLElement)
-  airChart=init(airChartRef.value as HTMLElement)
-  CoChart=init(CoChartRef.value as HTMLElement)
-  CH4Chart=init(CH4ChartRef.value as HTMLElement)
-  hoursChart=init(hoursChartRef.value as HTMLElement)
+  airChart = init(airChartRef.value as HTMLElement)
+  CoChart = init(CoChartRef.value as HTMLElement)
+  CH4Chart = init(CH4ChartRef.value as HTMLElement)
+  hoursChart = init(hoursChartRef.value as HTMLElement)
 })
 
 
@@ -624,102 +620,106 @@ const options = {
 }
 const city = ref('') // 定义城市变量
 const weather = ref('') // 定义天气变量
-const position= ref('')
-const lat=ref('')
-const lng=ref('')
+const position = ref('')
+const lat = ref('')
+const lng = ref('')
 // 获取城市信息
-onMounted(()=>{
-    AMapLoader.load(options).then((AMap) => {
+onMounted(() => {
+  AMapLoader.load(options).then((AMap) => {
     const geolocation = new AMap.Geolocation({
-    enableHighAccuracy: true,
-    timeout: 10000,
-    maximumAge: 0,
-    convert: true
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0,
+      convert: true
     })
     geolocation.getCityInfo(function (status, result) {
-    if (status === 'complete') {
-        city.value = result.city
+      if (status === 'complete') {
+        city.value = "柳州"
         console.log('城市查询成功：', city)
         getWeather()
         getLiveWeather()
-    } else {
+      } else {
         console.log('城市查询失败：', result)
-    }
+        city.value = "柳州"
+      }
     })
 
     geolocation.getCurrentPosition(function (status, result) {
-    if (status === 'complete') {
-        position.value=result.position
-        console.log(result.position.lat,'result.position.lat');
-        lat.value=result.position.lat
-        lng.value=result.position.lng
-        console.log('定位查询成功：',position )
-        getHoursWeather() 
+      if (status === 'complete') {
+        position.value = result.position
+        console.log(result.position.lat, 'result.position.lat');
+        lat.value = result.position.lat
+        lng.value = result.position.lng
+        console.log('定位查询成功：', position)
+        getHoursWeather()
         getAir()
-    } else {
+      } else {
+        lat.value = "31.30356"
+        lng.value = "120.59241"
+        getHoursWeather()
+        getAir()
         console.log('定位查询失败：', result)
-    }
+      }
     })
 
-})
+  })
 })
 // 获取天气信息
 function getWeather() {
-  console.log(city,'city');
-  
-    axios
+  console.log(city, 'city');
+  axios
     .get(
-        'https://restapi.amap.com/v3/weather/weatherInfo?city=' +
-        city.value +
-        '&key=05c5400c7a3d5ecd76586cc564182514&extensions=all'
+      'https://restapi.amap.com/v3/weather/weatherInfo?city=' +
+      city.value +
+      '&key=05c5400c7a3d5ecd76586cc564182514&extensions=all'
     )
     .then((res) => {
-        console.log(res.data.forecasts[0].casts,"sss");
-        const casts=res.data.forecasts[0].casts
-        for(let key in casts ){
-            date.push(casts[key].date)
-            wea[0].push(casts[key].daytemp) //最高温
-            wea[1].push(casts[key].nighttemp) //最低温
-            wea[2].push(casts[key].nightpower) //降雨量
-            wea[3].push(casts[key].dayweather) //天气
-            wea[4].push(casts[key].daywind) //风向
+      console.log(res.data.forecasts[0].casts, "sss");
+      const casts = res.data.forecasts[0].casts
+      for (let key in casts) {
+        date.push(casts[key].date)
+        wea[0].push(casts[key].daytemp) //最高温
+        wea[1].push(casts[key].nighttemp) //最低温
+        wea[2].push(casts[key].nightpower) //降雨量
+        wea[3].push(casts[key].dayweather) //天气
+        wea[4].push(casts[key].daywind) //风向
 
-        }
-        weather.value = res.data // 将请求返回的天气信息赋值给 weather 变量
-        // initChart()
+      }
+      weather.value = res.data // 将请求返回的天气信息赋值给 weather 变量
+      // initChart()
     })
 }
 //获取24小时天气
 function getHoursWeather() {
   const appCode = 'a165ea84682348e9ba1f5163cc19828f'; // 替换成你的阿里云应用程序代码
   const apiUrl = 'http://aliv8.data.moji.com/whapi/json/aliweather/forecast24hours'; // 替换成你的阿里云 API 网关 URL
-const formData=new FormData();
-const config={
-  headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `APPCODE ${appCode}`,
-          },
-}
-formData.append('lat',lat.value);
-formData.append('lon',lng.value);
-    axios
+  const formData = new FormData();
+  const config = {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `APPCODE ${appCode}`,
+    },
+  }
+  formData.append('lat', lat.value);
+  formData.append('lon', lng.value);
+  axios
     .post(
-        apiUrl,formData,config
+      apiUrl, formData, config
 
     )
     .then((res) => {
-        const casts=res.data.data.hourly
-        for(let key in casts ){
-            hoursWea[0].push(casts[key].hour) //小时
-            hoursWea[1].push(casts[key].temp) //温度
-            hoursWea[2].push(casts[key].humidity) //湿度
-            hoursWea[3].push(casts[key].condition) //天气
-            hoursWea[4].push(casts[key].windlevel) //风力等级
-            hoursWea[5].push(casts[key].pop) //降雨概率
-            hoursWea[6].push(casts[key].windSpeed)//风速
+      const casts = res.data.data.hourly
+      for (let key in casts) {
+        hoursWea[0].push(casts[key].hour) //小时
+        hoursWea[1].push(casts[key].temp) //温度
+        hoursWea[2].push(casts[key].humidity) //湿度
+        hoursWea[3].push(casts[key].condition) //天气
+        hoursWea[4].push(casts[key].windlevel) //风力等级
+        hoursWea[5].push(casts[key].pop) //降雨概率
+        hoursWea[6].push(casts[key].windSpeed)//风速
 
-        }
-        initChart()
+      }
+      initChart()
     })
 }
 
@@ -728,56 +728,60 @@ formData.append('lon',lng.value);
 function getAir() {
   const appCode = 'a165ea84682348e9ba1f5163cc19828f'; // 替换成你的阿里云应用程序代码
   const apiUrl = 'http://aliv8.data.moji.com/whapi/json/aliweather/aqi'; // 替换成你的阿里云 API 网关 URL
-const formData=new FormData();
-formData.append('lat',lat.value);
-formData.append('lon',lng.value);
-const config={
-  headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `APPCODE ${appCode}`,
-          },
-}
-    axios
+  const formData = new FormData();
+  formData.append('lat', lat.value);
+  formData.append('lon', lng.value);
+
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `APPCODE ${appCode}`,
+    },
+  }
+  axios
     .post(
-        apiUrl,formData,config
+      apiUrl, formData, config
 
     )
     .then((res) => {
-        console.log(res,"aly");
-        const casts=res.data.data.aqi
-        coData[0].value= casts.coC //一氧化碳
-        gaugeData[0].value=casts.so2C//二氧化硫
-        gaugeData[1].value=casts.o3C //臭氧
-        gaugeData[2].value=casts.no2C //二氧化氮
-        gaugeData[3].value=casts.pm25C //PM2.5
-        initChart()
+      console.log(res, "aly");
+      const casts = res.data.data.aqi
+      coData[0].value = casts.coC //一氧化碳
+      gaugeData[0].value = casts.so2C//二氧化硫
+      gaugeData[1].value = casts.o3C //臭氧
+      gaugeData[2].value = casts.no2C //二氧化氮
+      gaugeData[3].value = casts.pm25C //PM2.5
+      initChart()
 
     })
 }
 
-function getLiveWeather(){
-    axios
+function getLiveWeather() {
+  axios
     .get(
-        'https://restapi.amap.com/v3/weather/weatherInfo?city=' +
-        city.value +
-        '&key=05c5400c7a3d5ecd76586cc564182514&extensions=base'
+      'https://restapi.amap.com/v3/weather/weatherInfo?city=' +
+      city.value +
+      '&key=05c5400c7a3d5ecd76586cc564182514&extensions=base'
     )
     .then((res) => {
-        // 将请求返回的天气信息赋值给 weather 变量
-        console.log(LiveWeather,"www");
-        LiveWeather.value = res.data.lives[0]      
+      // 将请求返回的天气信息赋值给 weather 变量
+      console.log(LiveWeather, "www");
+      LiveWeather.value = res.data.lives[0]
     })
 }
 
 </script>
 
-<style>
+<style scoped>
 .el-row {
   margin-bottom: 20px;
 }
+
 .el-row:last-child {
   margin-bottom: 0;
 }
+
 .el-col {
   border-radius: 4px;
 }

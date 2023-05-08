@@ -5,29 +5,22 @@
     <el-icon>
       <Plus />
     </el-icon>
-    <template #file="{ file }" #tip="ssss" >
+    <template #file="{ file }" #tip="ssss">
       <div style="width: 100%;">
         <img class="el-upload-list__item-thumbnail" :src="file.img" style="height: 80%;" alt="" />
         <span class="el-upload-list__item-actions">
-          <span
-            class="el-upload-list__item-preview"
-            @click="handlePictureCardPreview(file)"
-          >
+          <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
             <el-icon><zoom-in /></el-icon>
-          </span> 
-          <span
-            v-if="!disabled"
-            class="el-upload-list__item-delete"
-            @click="handleDownload(file)"
-          >
-            <el-icon><Download /></el-icon>
           </span>
-          <span
-            v-if="!disabled"
-            class="el-upload-list__item-delete"
-            @click="handleRemove(file)"
-          >
-            <el-icon><Delete /></el-icon>
+          <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleDownload(file)">
+            <el-icon>
+              <Download />
+            </el-icon>
+          </span>
+          <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
+            <el-icon>
+              <Delete />
+            </el-icon>
           </span>
         </span>
 
@@ -55,6 +48,7 @@ import { DocumentListAPI, DocumentDownAPI, DocumentDeleteAPI } from '../api/uplo
 import type { UploadFile } from 'element-plus'
 import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
 import { fi } from 'element-plus/es/locale'
+import axios from 'axios'
 
 
 const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + '/File/UploadFile')
@@ -65,8 +59,13 @@ const disabled = ref(false)
 
 
 const beforeUpload = (file: File) => {
-  const fileTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','image/jpeg','image/png']
+  const fileTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'image/jpeg', 'image/png']
+  const token = sessionStorage.getItem('token');
+  console.log(token);
   const fileType = file.type
+  const formData = new FormData();
+  formData.append('file', file);
+  // formData.append('Authorization', `Bearer ${token}`);
   const isLt2M = file.size / 1024 / 1024 < 10
   if (!fileTypes.includes(fileType)) {
     proxy.$message.error('上传文件只能是 PDF、Word 或 Excel 格式!')
@@ -74,7 +73,8 @@ const beforeUpload = (file: File) => {
   if (!isLt2M) {
     proxy.$message.error('上传文件大小不能超过 10MB!')
   }
-  return fileTypes.includes(fileType) && isLt2M
+
+  return fileTypes.includes(fileType) && isLt2M ? formData : false;
 }
 
 
@@ -82,7 +82,6 @@ const beforeUpload = (file: File) => {
 function documentList() {
   DocumentListAPI({}).then((res: any) => {
     console.log(res);
-    // info.value=[]
     for (const key in res.data.list) {
       let re = reactive({
         name: '',
@@ -107,6 +106,7 @@ function documentList() {
 console.log(info, "info");
 documentList()
 
+
 // 上传成功后的处理
 const handleUploadSuccess = (response: any) => {
   let re = reactive({
@@ -115,13 +115,13 @@ const handleUploadSuccess = (response: any) => {
     img: '',
     id: '',
   })
-  if(response.code==403){
+  if (response.code == 403) {
     console.log(info.value.pop())
-    return   proxy.$message.error(response.msg)
+    return proxy.$message.error(response.msg)
   }
-  console.log(response,"re");
-  
-  response=response.data
+  console.log(response, "re");
+
+  response = response.data
   const fileType = response.type
   if (fileType === 'application/pdf') {
     // 处理 PDF 文件的逻辑
@@ -145,16 +145,16 @@ const handleUploadSuccess = (response: any) => {
     re.id = response.id
     re.name = response.documentName
     re.url = response.documentUrl
-    re.img=import.meta.env.VITE_APP_BASE_API + response.documentUrl
+    re.img = import.meta.env.VITE_APP_BASE_API + response.documentUrl
     // 处理图片文件的逻辑
   }
   console.log(info.value.pop())
   info.value.push(re)
 
 
-  console.log(response,"response");
-  console.log(re,"re");
-  
+  console.log(response, "response");
+  console.log(re, "re");
+
   // documentList()
   proxy.$message.success('上传成功')
 
@@ -163,14 +163,14 @@ const handleUploadSuccess = (response: any) => {
 
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
-const dialogFileName=ref('')
+const dialogFileName = ref('')
 //放大
 const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
-  console.log(uploadFile,"up");
+  console.log(uploadFile, "up");
   // 判断上传的文件是否为图片类型
-    dialogVisible.value = true
-    dialogImageUrl.value = uploadFile.img
-    dialogFileName.value=uploadFile.name
+  dialogVisible.value = true
+  dialogImageUrl.value = uploadFile.img
+  dialogFileName.value = uploadFile.name
 
 
 }
@@ -209,8 +209,9 @@ const handleDownload = (file: UploadFile) => {
     let contentDisposition = res.headers['content-disposition']
     let pattern = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
     let result = pattern.exec(contentDisposition)
+    console.log(result, "res");
     // 使用decodeURI对名字进行解码
-    // let fileName = decodeURI(result[1])
+    // let fileName = decodeURI(result[0])
     let downloadElement = document.createElement('a')
     // 创建下载的链接
     let href = window.URL.createObjectURL(blob)

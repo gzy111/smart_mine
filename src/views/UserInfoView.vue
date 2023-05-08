@@ -1,142 +1,143 @@
 <template>
   <el-row :gutter="20">
     <el-col :span="4" :xs="24">
-  <el-input v-model="filterText" placeholder="Filter keyword" />
-  <el-tree
-    ref="treeRef"
-    class="filter-tree"
-    :data="dataTree"
-    :props="defaultProps"
-    default-expand-all
-    :filter-node-method="filterNode"
-    @node-click="handleNodeClick"
-  />
-</el-col>
+      <el-input v-model="filterText" placeholder="Filter keyword" />
+      <el-tree ref="treeRef" class="filter-tree" :data="dataTree" :props="defaultProps" default-expand-all
+        :filter-node-method="filterNode" @node-click="handleNodeClick" />
+    </el-col>
 
-<el-col :span="20" :xs="24">
-  <div style="float: left;">
-  <el-button  @click="addUser()">
-        新增员工
-  </el-button>
-</div>
+    <el-col :span="20" :xs="24">
+      <el-row>
+        <el-form :inline="true" :model="queryParams" ref="ruleFormRef" class="demo-form-inline" style="margin: 0 0;">
+          <el-row>
+            <el-form-item label="姓名">
+              <el-input v-model="queryParams.userName" placeholder="姓名" />
+            </el-form-item>
+            <el-form-item label="手机号">
+              <el-input v-model="queryParams.phonenumber" placeholder="手机号" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="search">搜索</el-button>
+              <el-button @click="reset">重置</el-button>
+            </el-form-item>
+          </el-row>
+        </el-form>
 
-  <el-table :data="userList" style="width: 100%" v-loading="loading" >
-    <el-table-column prop="userId" label="用户id" width="100" />
-    <el-table-column prop="userName" label="姓名" width="100" />
-    <el-table-column prop="sex" label="性别" width="100"/>
-    <el-table-column prop="phonenumber" label="手机" width="150"/>
-    <el-table-column prop="dept.deptName" label="部门" width="100"/>
-    <el-table-column prop="post.postName" label="岗位" width="100" />
-    <el-table-column prop="userPosition" label="位置" width="100" />
-    <el-table-column prop="status" label="状态" width="100" >
-      <template #default="scope">
-      <el-switch v-model="scope.row.status" 
-      active-value="true"
-      inactive-value="false"
-      @click="handleStatusChange(scope.row)"
-      />
-    </template>
-    </el-table-column>
-    <el-table-column  align="right" >
-      <template #default="scope">
-        <el-button size="small" @click="handleEdit(scope.$index, scope.row)" :icon="Edit" ></el-button>
-        <el-button size="small" type="danger" @click="handleDelete(scope.row)" :icon="Delete"></el-button>
-        <el-button size="small"  @click="handleInfo(scope.$index, scope.row)" :icon="User"></el-button>
-      </template>
-    </el-table-column>
-  </el-table>
+      </el-row>
+      <div style="float: left;">
+        <el-button @click="addUser()">
+          新增员工
+        </el-button>
+      </div>
 
-  <el-pagination :page-size=queryParams.pageNum :page-count="total" layout="prev, pager, next,total,jumper" :total="total"
-     v-model:current-page="queryParams.pageNum"
-    @current-change="handleCurrentChange" />
-    
-</el-col>
-</el-row>
+      <el-table :data="userList" style="width: 100%" v-loading="loading">
+        <el-table-column prop="userId" label="用户id" width="100" />
+        <el-table-column prop="userName" label="姓名" width="100" />
+        <el-table-column prop="sex" label="性别" width="100" />
+        <el-table-column prop="phonenumber" label="手机" width="150" />
+        <el-table-column prop="dept.deptName" label="部门" width="100" />
+        <el-table-column prop="post.postName" label="岗位" width="100" />
+        <el-table-column prop="userPosition" label="位置" width="100" />
+        <el-table-column prop="status" label="状态" width="100">
+          <template #default="scope">
+            <el-switch v-model="scope.row.status" active-value="true" inactive-value="false"
+              @click="handleStatusChange(scope.row)" />
+          </template>
+        </el-table-column>
+        <el-table-column align="right">
+          <template #default="scope">
+            <el-button size="small" @click="handleEdit(scope.$index, scope.row)" :icon="Edit"></el-button>
+            <el-button size="small" type="danger" @click="handleDelete(scope.row)" :icon="Delete"></el-button>
+            <el-button size="small" @click="handleInfo(scope.$index, scope.row)" :icon="User"></el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-<!---------------------------------------------------------弹窗------------------------------------->
-<el-dialog v-model="dialogFormVisible" :title="userFrom.userId?'员工信息': '新增员工'" align-center destroy-on-close width="25%" >
-<el-form 
-ref="ruleFormRef"
-:rules="rules"
-:model="userFrom" 
-label-width="120px" 
-:disabled="infoFlag"
->
+      <el-pagination :page-size=queryParams.pageNum :page-count="total" layout="prev, pager, next,total,jumper"
+        :total="total" v-model:current-page="queryParams.pageNum" @current-change="handleCurrentChange" />
 
+    </el-col>
+  </el-row>
 
-    <el-form-item label="员工ID">
-      <el-input v-model="userFrom.userId" :disabled="true" />
-    </el-form-item>
+  <!---------------------------------------------------------弹窗------------------------------------->
+  <el-dialog v-model="dialogFormVisible" :title="userFrom.userId ? '员工信息' : '新增员工'" align-center destroy-on-close
+    width="25%">
+    <el-form ref="ruleFormRef" :rules="rules" :model="userFrom" label-width="120px" :disabled="infoFlag">
 
 
-    <el-form-item label="员工姓名">
-      <el-input v-model="userFrom.userName" />
-    </el-form-item>
+      <el-form-item label="员工ID">
+        <el-input v-model="userFrom.userId" :disabled="true" />
+      </el-form-item>
 
 
-    <el-form-item label="性别">
-      <el-radio-group v-model="userFrom.sex">
-        <el-radio label="男" />
-        <el-radio label="女" />
-      </el-radio-group>
-    </el-form-item>
-
-    <el-form-item label="家庭住址">
-      <el-input v-model="userFrom.addres" />
-    </el-form-item>
-
-    <el-form-item label="邮箱">
-      <el-input v-model="userFrom.email" />
-    </el-form-item>
-
-    <el-form-item label="手机号码">
-      <el-input v-model="userFrom.phonenumber" />
-    </el-form-item>
-
-    <el-form-item label="身份证">
-      <el-input v-model="userFrom.idCard" />
-    </el-form-item>
-
-    <el-form-item label="部门">
-      <el-select v-model="userFrom.deptId" placeholder="请选择部门" filterable @change="changed" >
-        <el-option v-for="item in toRaw(deptList)" :key="item" :label="item.deptName" :value="item.deptId"  />
-      </el-select>
-    </el-form-item>
-
-    <el-form-item label="岗位">
-      <el-select v-model="userFrom.postId" placeholder="请选择岗位" >
-        <el-option v-for="item in toRaw(postList)" :key="item" :label="item.postName" :value="item.postId" />
-      </el-select>
-    </el-form-item>
+      <el-form-item label="员工姓名">
+        <el-input v-model="userFrom.userName" />
+      </el-form-item>
 
 
-    <el-form-item label="状态">
-      <el-switch v-model="userFrom.status" />
-    </el-form-item>
-    <el-form-item label="定位">
-      <el-input v-model="userFrom.userPosition" />
-    </el-form-item>
+      <el-form-item label="性别">
+        <el-radio-group v-model="userFrom.sex">
+          <el-radio label="男" />
+          <el-radio label="女" />
+        </el-radio-group>
+      </el-form-item>
 
-    <el-form-item label="备注">
-      <el-input v-model="userFrom.remark" type="textarea" />
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="submitForm(ruleFormRef)">Create</el-button>
-      <el-button @click="resetForm(ruleFormRef)">Cancel</el-button>
-    </el-form-item>
+      <el-form-item label="家庭住址">
+        <el-input v-model="userFrom.addres" />
+      </el-form-item>
 
-  </el-form>
+      <el-form-item label="邮箱">
+        <el-input v-model="userFrom.email" />
+      </el-form-item>
+
+      <el-form-item label="手机号码">
+        <el-input v-model="userFrom.phonenumber" />
+      </el-form-item>
+
+      <el-form-item label="身份证">
+        <el-input v-model="userFrom.idCard" />
+      </el-form-item>
+
+      <el-form-item label="部门">
+        <el-select v-model="userFrom.deptId" placeholder="请选择部门" filterable @change="changed">
+          <el-option v-for="item in toRaw(deptList)" :key="item" :label="item.deptName" :value="item.deptId" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="岗位">
+        <el-select v-model="userFrom.postId" placeholder="请选择岗位">
+          <el-option v-for="item in toRaw(postList)" :key="item" :label="item.postName" :value="item.postId" />
+        </el-select>
+      </el-form-item>
+
+
+      <el-form-item label="状态">
+        <el-switch v-model="userFrom.status" />
+      </el-form-item>
+      <el-form-item label="定位">
+        <el-input v-model="userFrom.userPosition" />
+      </el-form-item>
+
+      <el-form-item label="备注">
+        <el-input v-model="userFrom.remark" type="textarea" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="submitForm(ruleFormRef)">Create</el-button>
+        <el-button @click="resetForm(ruleFormRef)">Cancel</el-button>
+      </el-form-item>
+
+    </el-form>
   </el-dialog>
-<!---------------------------------------------------------------弹窗--------------------------------------------------------- -->
+  <!---------------------------------------------------------------弹窗--------------------------------------------------------- -->
 </template>
 
 <script lang="ts" setup>
-import { ref, watch ,toRaw , toRef,reactive,toRefs,getCurrentInstance,onMounted} from 'vue'
+import { ref, watch, toRaw, toRef, reactive, toRefs, getCurrentInstance, onMounted } from 'vue'
 import { ElTree } from 'element-plus'
-import{DeptSelectAllAPI,DeptTree} from "../api/deptAPI"
-import{userSelectPageAPI} from "../api/userAPI"
+import { DeptSelectAllAPI, DeptTree } from "../api/deptAPI"
+import { userSelectPageAPI } from "../api/userAPI"
 import { PostSelectAPI } from '../api/postAPI'
-import { updateUserAPI, insertUserAPI ,deleteUserAPI} from '../api/userAPI'
+import { updateUserAPI, insertUserAPI, deleteUserAPI } from '../api/userAPI'
 import type { FormInstance, FormRules } from 'element-plus'
 import { Delete, Edit, Search, Share, Upload, User } from '@element-plus/icons-vue'
 import { da } from 'element-plus/es/locale';
@@ -149,8 +150,8 @@ interface Tree {
 const filterText = ref('')
 const loading = ref(false)
 const treeRef = ref<InstanceType<typeof ElTree>>()
-const dialogFormVisible=ref(false)
-const infoFlag=ref(true)
+const dialogFormVisible = ref(false)
+const infoFlag = ref(true)
 const userList = ref([])
 const defaultProps = {
   children: 'children',
@@ -194,9 +195,11 @@ const datas = reactive({
     pageSize: 10,
     deptId: undefined,
     postId: undefined,
+    userName: undefined,
+    phonenumber: undefined,
   },
 });
-const total=ref()
+const total = ref()
 const { queryParams } = toRefs(datas);
 
 watch(filterText, (val) => {
@@ -214,48 +217,64 @@ const handleNodeClick = (data: Tree) => {
   // if(data.id=1)
   let str = data.id
   //岗位编码由P+部门ID(3位数字)+岗位ID组成
-  if(str.substring(0,1)=='P'){
+  if (str.substring(0, 1) == 'P') {
     console.log("p");
-    queryParams.value.deptId=Number(str.substring(1,4))
-    queryParams.value.postId=Number(str.substring(4,7))
+    queryParams.value.deptId = Number(str.substring(1, 4))
+    queryParams.value.postId = Number(str.substring(4, 7))
+    queryParams.value.phonenumber = undefined
+    queryParams.value.userName = undefined
     console.log(queryParams.value);
     getList()
-  }else if(str.substring(1,4)!=''){
-    queryParams.value.deptId=str
-    console.log(str,"str");
-    queryParams.value.postId=undefined;
+  } else if (str.substring(1, 4) != '') {
+    queryParams.value.deptId = str
+    console.log(str, "str");
+    queryParams.value.postId = undefined;
+    queryParams.value.phonenumber = undefined
+    queryParams.value.userName = undefined
     getList()
-  }else{
-    queryParams.value.deptId=undefined;
-    queryParams.value.postId=undefined;
+  } else {
+    queryParams.value.deptId = undefined;
+    queryParams.value.postId = undefined;
+    queryParams.value.phonenumber = undefined
+    queryParams.value.userName = undefined
     getList()
   }
 }
 
 //树形结构信息
-const info=ref(undefined)
+const info = ref(undefined)
 
 //树形结构
 DeptTree({}).then((res: any) => {
-  info.value=res.data
-  });
+  info.value = res.data
+});
 
 
+//搜索
+const search = () => {
+  getList();
+}
 
+const reset = () => {
+  queryParams.value.userName = undefined
+  queryParams.value.phonenumber = undefined
+  getList()
+
+}
 
 const handleCurrentChange = (val: number) => {
   queryParams.value.pageNum = val
   getList()
 }
 
-  /** 查询用户列表 */
+/** 查询用户列表 */
 function getList() {
   loading.value = true;
   userSelectPageAPI(queryParams.value).then(res => {
-   
+
     console.log(res.data);
     userList.value = res.data.list;
-    total.value=res.data.pages
+    total.value = res.data.pages
     loading.value = false;
   });
 };
@@ -264,7 +283,7 @@ function getList() {
 function changed(val: any) {
   PostSelectAPI({ deptId: val }).then((res: any) => {
     postList.value = res.data.list
-    console.log(res,"post");
+    console.log(res, "post");
   });
 }
 
@@ -274,7 +293,7 @@ const ruleFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
   userName: [
     { required: true, message: '请输入用户名称', trigger: 'blur' },
-    
+
   ],
   deptId: [
     {
@@ -299,80 +318,80 @@ DeptSelectAllAPI({}).then((res: any) => {
 });
 //点击编辑按钮，内容添加到弹出框
 const handleEdit = (index: number, row: any) => {
-  dialogFormVisible.value=true
-  infoFlag.value=false
-  userFrom.userName=row.userName
-  userFrom.userId=row.userId
-  userFrom.deptId=row.deptId
-  userFrom.postId=row.postId
-  if(row.status=='true'){
-    userFrom.status=ref(true)
-  }else{
-    userFrom.status=ref(false)
+  dialogFormVisible.value = true
+  infoFlag.value = false
+  userFrom.userName = row.userName
+  userFrom.userId = row.userId
+  userFrom.deptId = row.deptId
+  userFrom.postId = row.postId
+  if (row.status == 'true') {
+    userFrom.status = ref(true)
+  } else {
+    userFrom.status = ref(false)
   }
-  userFrom.sex=row.sex
-  userFrom.idCard=row.idCard
-  userFrom.email=row.email
-  userFrom.addres=row.addres
-  userFrom.phonenumber=row.phonenumber
-  userFrom.userPosition=row.userPosition
-  userFrom.remark=row.remark
-  console.log(row,"ss");
-  
+  userFrom.sex = row.sex
+  userFrom.idCard = row.idCard
+  userFrom.email = row.email
+  userFrom.addres = row.addres
+  userFrom.phonenumber = row.phonenumber
+  userFrom.userPosition = row.userPosition
+  userFrom.remark = row.remark
+  console.log(row, "ss");
+
   changed(row.deptId)
 }
 
 //点击详细按钮，内容添加到弹出框
 const handleInfo = (index: number, row: any) => {
-  dialogFormVisible.value=true
-  infoFlag.value=true
-  userFrom.userName=row.userName
-  userFrom.userId=row.userId
-  userFrom.deptId=row.deptId
-  userFrom.postId=row.postId
-  if(row.status=='true'){
-    userFrom.status=ref(true)
-  }else{
-    userFrom.status=ref(false)
+  dialogFormVisible.value = true
+  infoFlag.value = true
+  userFrom.userName = row.userName
+  userFrom.userId = row.userId
+  userFrom.deptId = row.deptId
+  userFrom.postId = row.postId
+  if (row.status == 'true') {
+    userFrom.status = ref(true)
+  } else {
+    userFrom.status = ref(false)
   }
-  userFrom.sex=row.sex
-  userFrom.idCard=row.idCard
-  userFrom.email=row.email
-  userFrom.addres=row.addres
-  userFrom.phonenumber=row.phonenumber
-  userFrom.userPosition=row.userPosition
-  userFrom.remark=row.remark
-  console.log(row,"ss");
-  
+  userFrom.sex = row.sex
+  userFrom.idCard = row.idCard
+  userFrom.email = row.email
+  userFrom.addres = row.addres
+  userFrom.phonenumber = row.phonenumber
+  userFrom.userPosition = row.userPosition
+  userFrom.remark = row.remark
+  console.log(row, "ss");
+
   changed(row.deptId)
 }
 
 //添加
-const addUser= () => {
-  dialogFormVisible.value=true
-  infoFlag.value=false
-  userFrom.userName=undefined
-  userFrom.userId=undefined
-  userFrom.deptId=""
-  userFrom.postId=""
-  userFrom.status='true'
-  userFrom.sex=""
-  userFrom.idCard=""
-  userFrom.email=""
-  userFrom.addres=''
-  userFrom.phonenumber=undefined
-  userFrom.userPosition=''
+const addUser = () => {
+  dialogFormVisible.value = true
+  infoFlag.value = false
+  userFrom.userName = undefined
+  userFrom.userId = undefined
+  userFrom.deptId = ""
+  userFrom.postId = ""
+  userFrom.status = 'true'
+  userFrom.sex = ""
+  userFrom.idCard = ""
+  userFrom.email = ""
+  userFrom.addres = ''
+  userFrom.phonenumber = undefined
+  userFrom.userPosition = ''
 }
 
-const handleDelete=( row: any)=>{
-  proxy.$msgbox.confirm('确认要删除'  + '"' + row.userName + '"用户吗?').then(function () {
-    deleteUserAPI({userId:row.userId}).then((res: any) => {
+const handleDelete = (row: any) => {
+  proxy.$msgbox.confirm('确认要删除' + '"' + row.userName + '"用户吗?').then(function () {
+    deleteUserAPI({ userId: row.userId }).then((res: any) => {
       getList()
-      });
+    });
   }).then(() => {
-    proxy.$message.success( "删除成功");
+    proxy.$message.success("删除成功");
     dialogFormVisible.value = false
-    
+
   }).catch(function () {
 
   });
@@ -387,8 +406,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     //添加
 
     console.log(userFrom);
-    
-    if (valid && userFrom.userId==undefined) {
+
+    if (valid && userFrom.userId == undefined) {
       insertUserAPI(userFrom).then((res: any) => {
         dialogFormVisible.value = false
         proxy.$message.success('添加成功')
@@ -412,21 +431,21 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 }
 
 /** 用户状态修改  */
-function handleStatusChange(row:any) {
+function handleStatusChange(row: any) {
   let text = row.status == "true" ? "启用" : "停用";
   proxy.$msgbox.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
-   updateUserAPI({userId:row.userId,status:row.status}).then((res: any) => {
-    getList()
-      });
+    updateUserAPI({ userId: row.userId, status: row.status }).then((res: any) => {
+      getList()
+    });
   }).then(() => {
     proxy.$message.success(text + "成功");
     dialogFormVisible.value = false
   }).catch(function () {
-    console.log(row.status,"bbb");
+    console.log(row.status, "bbb");
     row.status = row.status == "true" ? "false" : "true";
   });
   console.log(row);
-  
+
 };
 
 
@@ -434,7 +453,7 @@ function handleStatusChange(row:any) {
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
-  dialogFormVisible.value=false
+  dialogFormVisible.value = false
 
 }
 

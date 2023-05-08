@@ -152,8 +152,6 @@ DeptSelectAllAPI({}).then((res: any) => {
         info.value.push(re)
     }
     deptList.value=res.data
-
-    
 });
 
 //树状结构

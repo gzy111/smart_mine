@@ -24,14 +24,14 @@
               </el-menu-item-group>
             </el-sub-menu>
             <router-link to="/RepairView">
-            <el-menu-item index="/RepairView">
-              <el-icon>
-                  <Notebook />
+              <el-menu-item index="/RepairView">
+                <el-icon>
+                  <setting />
                 </el-icon>
-              <template #title>
-                <span>设备维修</span>
-              </template>
-            </el-menu-item>
+                <template #title>
+                  <span>设备维修</span>
+                </template>
+              </el-menu-item>
             </router-link>
 
             <router-link to="/equipment">
@@ -42,43 +42,59 @@
                 <template #title>设备管理</template>
               </el-menu-item>
             </router-link>
-            
+
             <router-link to="/measureView">
 
-            <el-menu-item index="/measureView">
-              <el-icon>
-                <WindPower />
-              </el-icon>
-              <template #title>环境监测</template>
-            </el-menu-item>
-          </router-link>
-
-            <router-link to="/productionInfoView">
-            <el-menu-item index="/productionInfoView">
-              <el-icon>
-                <setting />
-              </el-icon>
-              <template #title>生产信息</template>
-            </el-menu-item>
+              <el-menu-item index="/measureView">
+                <el-icon>
+                  <WindPower />
+                </el-icon>
+                <template #title>环境监测</template>
+              </el-menu-item>
             </router-link>
 
+            <!-- <router-link to="/productionInfoView">
+              <el-menu-item index="/productionInfoView">
+                <el-icon>
+                  <setting />
+                </el-icon>
+                <template #title>生产信息</template>
+              </el-menu-item>
+            </router-link> -->
+
             <router-link to="/infoView">
-            <el-menu-item index="/infoView">
-              <el-icon>
-                <Files />
-              </el-icon>
-              <template #title>固有信息</template>
-            </el-menu-item>
-           </router-link>
+              <el-menu-item index="/infoView">
+                <el-icon>
+                  <Files />
+                </el-icon>
+                <template #title>固有信息</template>
+              </el-menu-item>
+            </router-link>
+
+            <!-- <a href="http://localhost:5173/#/smartWindowView" target="_blank"> -->
+            <router-link to="smartWindowView">
+              <el-menu-item index="/smartWindowView">
+                <el-icon>
+                  <Files />
+                </el-icon>
+                <template #title>大屏显示</template>
+              </el-menu-item>
+            </router-link>
+            <!-- </a> -->
+
 
           </el-menu>
         </el-aside>
         <el-radio-group v-model="isCollapse" style="margin-bottom: 15px;display: block;">
           <div style="width: 25px;height: 25px; " :style="flgFlase" @click="handFalseClick()">
-            <el-icon  :size="25"><Expand /></el-icon>
+            <el-icon :size="25">
+              <Expand />
+            </el-icon>
           </div>
-          <div style="width: 25px;height: 25px;"  :style="flgTrue" @click="handTrueClick()">
-            <el-icon  :size="25"><Fold /></el-icon>
+          <div style="width: 25px;height: 25px;" :style="flgTrue" @click="handTrueClick()">
+            <el-icon :size="25">
+              <Fold />
+            </el-icon>
           </div>
         </el-radio-group>
         <!-- 左边菜单栏 结束-->
@@ -96,7 +112,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref ,reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import {
   Document,
   Menu as IconMenu,
@@ -113,12 +129,12 @@ import {
 } from '@element-plus/icons-vue'
 
 const isCollapse = ref(true)
-const flgFlase=reactive({
-  display:""
+const flgFlase = reactive({
+  display: ""
 })
 
-const flgTrue=reactive({
-  display:"none"
+const flgTrue = reactive({
+  display: "none"
 })
 
 
@@ -129,15 +145,15 @@ const handleClose = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
 }
 
-const handFalseClick=()=>{
-  isCollapse.value=false
-  flgFlase.display="none"
-  flgTrue.display=""
+const handFalseClick = () => {
+  isCollapse.value = false
+  flgFlase.display = "none"
+  flgTrue.display = ""
 }
-const handTrueClick=()=>{
-  isCollapse.value=true
-  flgTrue.display="none"
-  flgFlase.display=""
+const handTrueClick = () => {
+  isCollapse.value = true
+  flgTrue.display = "none"
+  flgFlase.display = ""
 }
 
 </script>
@@ -178,7 +194,7 @@ const handTrueClick=()=>{
   background-color: rgb(34, 61, 151);
 }
 
-.left_menu{
+.left_menu {
   background-color: rgb(255, 255, 255);
 }
 </style>

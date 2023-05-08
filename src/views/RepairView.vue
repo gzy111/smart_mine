@@ -1,9 +1,61 @@
 <template>
   <div id="repair_main">
     <div class="top">
+      <el-row>
+        <el-col :span="8">
+          <el-statistic :value="topData.state1" value-style="font-size:30px">
+
+            <template #title>
+              <div style="display: inline-flex; align-items: center;font-size: 20px; margin-top: 15px;">
+                待维修
+              </div>
+            </template>
+            <template #suffix>
+              <el-icon style="vertical-align: -0.125em">
+                <Van />
+              </el-icon>
+            </template>
+          </el-statistic>
+
+        </el-col>
+        <el-col :span="8">
+          <el-statistic :value="topData.state2" value-style="font-size:30px">
+            <template #default>
+            </template>
+            <template #title>
+              <div style="display: inline-flex; align-items: center ;font-size: 20px; margin-top: 15px;">
+                维修中
+              </div>
+            </template>
+            <template #suffix>
+              <el-icon style="vertical-align: -0.125em">
+                <Van />
+              </el-icon>
+            </template>
+          </el-statistic>
+        </el-col>
 
 
+        <el-col :span="8">
+          <el-statistic :value="topData.state0" value-style="font-size:30px">
+            <template #default>
+            </template>
+            <template #title>
+              <div style="display: inline-flex; align-items: center ;font-size: 20px; margin-top: 15px;">
+                维修完成
+              </div>
+            </template>
+            <template #suffix>
+              <el-icon style="vertical-align: -0.125em">
+                <Van />
+              </el-icon>
+            </template>
+          </el-statistic>
+        </el-col>
+      </el-row>
     </div>
+
+
     <div class="form_div">
       <el-row>
         <el-form :inline="true" :model="queryParams" ref="ruleFormRef" class="demo-form-inline" style="margin: 0 0;">
@@ -59,10 +111,7 @@
           <template #default="scope">
             <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
             <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
-            <el-tooltip class="box-item" effect="light" content="报修" placement="bottom-end"> <el-button size="small"
-                type="warning" @click="handleRepair(scope.$index, scope.row)"><el-icon>
-                  <Warning />
-                </el-icon></el-button></el-tooltip>
+
           </template>
         </el-table-column>
       </el-table>
@@ -137,7 +186,12 @@ import { ref, toRefs, reactive, toRaw, shallowReactive, onBeforeMount, getCurren
 import type { FormInstance, FormRules, ElMessage } from 'element-plus'
 import { Delete, Edit, Search, Share, Warning } from '@element-plus/icons-vue'
 import { RepairDeleteAPI, RepairInsertAPI, RepairSelectPageAPI, RepairUpdateAPI } from '../api/repairAPI'
+import { equipmentUpdateAPI } from "../api/equipmentAPI"
 import { userSelectPageAPI } from '../api/userAPI'
+import {
+  Document,
+  Van,
+} from '@element-plus/icons-vue'
 const { proxy } = getCurrentInstance()
 //传参
 const datas = reactive({
@@ -168,6 +222,13 @@ const repairForm = reactive({
   data: '',
   state: ''
 })
+const topData = reactive({
+  state0: undefined,
+  state1: undefined,
+  state2: undefined,
+})
+
+
 
 
 const { queryParams } = toRefs(datas);
@@ -210,6 +271,15 @@ function getRepairList() {
     total.value = res.data.pages
     console.log(res.data.list)
     loading.value = false
+  });
+  RepairSelectPageAPI({ state: 0 }).then((res: any) => {
+    topData.state0 = res.data.total
+  });
+  RepairSelectPageAPI({ state: 1 }).then((res: any) => {
+    topData.state1 = res.data.total
+  });
+  RepairSelectPageAPI({ state: 2 }).then((res: any) => {
+    topData.state2 = res.data.total
   });
 }
 //根据状态分类
@@ -255,10 +325,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     //添加
     if (valid) {
       console.log(repairForm);
+      if (repairForm.state == '0') {
 
+        let str: any = repairForm.equipmentCode
+        let code = str.split("-")[0]
+        equipmentUpdateAPI({ equipmentCode: code, state: '0' })
+      }
       RepairUpdateAPI(repairForm).then((res: any) => {
         dialogFormVisible.value = false
-        proxy.$message.success('添加成功')
+        proxy.$message.success('修改成功')
         getRepairList() //更新数据
       });
     } else {
@@ -301,18 +376,17 @@ const handleDelete = (row: any) => {
 }
 
 .top {
-  background-color: rgb(242, 253, 253);
+  background-color: rgb(249, 250, 250);
   position: relative;
-  height: 100px;
+  /* height: 100px; */
   width: 98%;
   margin: 15px auto;
   align-items: center;
   text-align: center;
-  vertical-align:middle;
+  vertical-align: middle;
   border-radius: 5px 5px 5px 5px;
-  line-height: 100px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+  /* line-height: 100px; */
 }
-
-
 </style>
   

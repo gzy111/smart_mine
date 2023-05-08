@@ -10,6 +10,7 @@ import productionInfoView from '../views/productionInfoView.vue'
 import testVue from '../views/test.vue'
 import measureView from '../views/measureView.vue'
 import login from '../views/login.vue'
+import smartWindowView from '../views/smartWindowView.vue'
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -63,7 +64,8 @@ const routes: Array<RouteRecordRaw> = [
       path: '/testVue',
       name: 'testVue',
       component: testVue
-    }
+    } ,
+   
 
     ]
   },
@@ -71,6 +73,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/login',
     name: 'login',
     component: login,
+  },
+  {
+    path: '/smartWindowView',
+    name: 'smartWindowView',
+    component: smartWindowView
   },
 
 ]

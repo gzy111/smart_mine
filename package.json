@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@element-plus/icons": "^0.0.11",
+    "@jiaminghi/data-view": "^2.10.0",
     "axios": "^1.3.4",
     "echarts": "^5.4.2",
     "element-plus": "^2.2.35",
