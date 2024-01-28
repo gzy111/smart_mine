@@ -122,7 +122,8 @@
 
 
   <!-- ---------------------------弹窗 ------------------------------------------------------------>
-  <el-dialog v-model="dialogFormVisible" title="编辑维修" destroy-on-close width="700px" :align-center="true" :center="true">
+  <el-dialog v-model="dialogFormVisible" title="编辑维修" destroy-on-close width="700px" :align-center="true" :center="true"
+    :close-text="'关闭'" :confirm-button-text="'确认'">
     <div class="dialog-container">
       <el-form :model="repairForm" ref="ruleFormRef" label-width="120px">
         <el-row>

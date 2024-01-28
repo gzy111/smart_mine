@@ -55,7 +55,7 @@
         <div class="bar">
           <div class="barbox">
             <ul class="clearfix">
-              <li class="pulll_left counter">{{ people[1] }}</li>
+              <li class="pulll_left counter">{{ people[0] }}</li>
               <li class="pulll_left counter">{{ people[0] + people[1] }}</li>
             </ul>
           </div>
@@ -628,9 +628,9 @@ function randomData() {
   return Math.random() * (max - min) + min;
 }
 window.setInterval(function () {
-  WYy[0].push(randomData())
-  WYy[1].push(randomData())
-  WYy[2].push(randomData())
+  WYy[0].push(parseFloat(randomData().toFixed(2)))
+  WYy[1].push(parseFloat(randomData().toFixed(2)))
+  WYy[2].push(parseFloat(randomData().toFixed(2)))
   console.log(WYy, 'WYY');
 
   WYChart.setOption<echarts.EChartsOption>({
@@ -833,6 +833,7 @@ onMounted(() => {
   storeKSChart = init(storeKSChartRef.value as HTMLElement)
   storeYQChart = init(storeYQChartRef.value as HTMLElement)
   storeSBChart = init(storeSBChartRef.value as HTMLElement)
+
   WYChart = init(WYChartRef.value as HTMLElement)
   WYChart.setOption(WYOption)
   // eqChart = init(eqChartRef.value as HTMLElement)

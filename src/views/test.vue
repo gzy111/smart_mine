@@ -3,6 +3,7 @@
 </template>
  
 <script lang='ts'>
+// import { dvscrollboard } from '@jiaminghi/data-view'
 import { defineComponent } from 'vue'
 
 export default defineComponent({

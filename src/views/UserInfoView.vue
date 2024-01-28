@@ -44,6 +44,11 @@
               @click="handleStatusChange(scope.row)" />
           </template>
         </el-table-column>
+        <el-table-column prop="avatar" label="员工照片" width="100">
+          <template #default="scope">
+            <el-avatar shape="square" :size="50" fit="fit" :src="scope.row.avatar" />
+          </template>
+        </el-table-column>
         <el-table-column align="right">
           <template #default="scope">
             <el-button size="small" @click="handleEdit(scope.$index, scope.row)" :icon="Edit"></el-button>
@@ -61,26 +66,55 @@
 
   <!---------------------------------------------------------弹窗------------------------------------->
   <el-dialog v-model="dialogFormVisible" :title="userFrom.userId ? '员工信息' : '新增员工'" align-center destroy-on-close
-    width="25%">
+    width="40%">
     <el-form ref="ruleFormRef" :rules="rules" :model="userFrom" label-width="120px" :disabled="infoFlag">
+      <el-avatar shape="square" :size="100" fit="fit" :src="userFrom.avatar" />
+
+      <el-upload ref="upload" class="upload-demo" :action="uploadUrl" :limit="1" :on-exceed="handleExceed"
+        :auto-upload="false" accept=".jpg,.png" :on-success="handleUploadSuccess">
+        <template #trigger>
+          <el-button type="primary">选择图片</el-button>
+        </template>
+        <el-button class="ml-3" type="success" @click="submitUpload">
+          更新图片
+        </el-button>
+        <template #tip>
+          <div class="el-upload__tip text-red">
+            替换头像
+          </div>
+        </template>
+      </el-upload>
 
 
-      <el-form-item label="员工ID">
-        <el-input v-model="userFrom.userId" :disabled="true" />
-      </el-form-item>
 
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="员工ID">
+            <el-input v-model="userFrom.userId" :disabled="true" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="员工姓名" prop="userName">
+            <el-input v-model="userFrom.userName" />
+          </el-form-item>
+        </el-col>
+      </el-row>
 
-      <el-form-item label="员工姓名">
-        <el-input v-model="userFrom.userName" />
-      </el-form-item>
-
-
-      <el-form-item label="性别">
-        <el-radio-group v-model="userFrom.sex">
-          <el-radio label="男" />
-          <el-radio label="女" />
-        </el-radio-group>
-      </el-form-item>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="性别">
+            <el-radio-group v-model="userFrom.sex">
+              <el-radio label="男" />
+              <el-radio label="女" />
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="手机号码" prop="phonenumber">
+            <el-input v-model="userFrom.phonenumber" />
+          </el-form-item>
+        </el-col>
+      </el-row>
 
       <el-form-item label="家庭住址">
         <el-input v-model="userFrom.addres" />
@@ -90,40 +124,47 @@
         <el-input v-model="userFrom.email" />
       </el-form-item>
 
-      <el-form-item label="手机号码">
-        <el-input v-model="userFrom.phonenumber" />
-      </el-form-item>
+
 
       <el-form-item label="身份证">
         <el-input v-model="userFrom.idCard" />
       </el-form-item>
 
-      <el-form-item label="部门">
-        <el-select v-model="userFrom.deptId" placeholder="请选择部门" filterable @change="changed">
-          <el-option v-for="item in toRaw(deptList)" :key="item" :label="item.deptName" :value="item.deptId" />
-        </el-select>
-      </el-form-item>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="部门" prop="deptId">
+            <el-select v-model="userFrom.deptId" placeholder="请选择部门" filterable @change="changed">
+              <el-option v-for="item in toRaw(deptList)" :key="item" :label="item.deptName" :value="item.deptId" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="岗位">
+            <el-select v-model="userFrom.postId" placeholder="请选择岗位">
+              <el-option v-for="item in toRaw(postList)" :key="item" :label="item.postName" :value="item.postId" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
 
-      <el-form-item label="岗位">
-        <el-select v-model="userFrom.postId" placeholder="请选择岗位">
-          <el-option v-for="item in toRaw(postList)" :key="item" :label="item.postName" :value="item.postId" />
-        </el-select>
-      </el-form-item>
-
-
-      <el-form-item label="状态">
-        <el-switch v-model="userFrom.status" />
-      </el-form-item>
-      <el-form-item label="定位">
-        <el-input v-model="userFrom.userPosition" />
-      </el-form-item>
-
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="状态">
+            <el-switch v-model="userFrom.status" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="定位">
+            <el-input v-model="userFrom.userPosition" />
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-form-item label="备注">
         <el-input v-model="userFrom.remark" type="textarea" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm(ruleFormRef)">Create</el-button>
-        <el-button @click="resetForm(ruleFormRef)">Cancel</el-button>
+        <el-button type="primary" @click="submitForm(ruleFormRef)">保存</el-button>
+        <el-button @click="resetForm(ruleFormRef)">取消</el-button>
       </el-form-item>
 
     </el-form>
@@ -138,10 +179,46 @@ import { DeptSelectAllAPI, DeptTree } from "../api/deptAPI"
 import { userSelectPageAPI } from "../api/userAPI"
 import { PostSelectAPI } from '../api/postAPI'
 import { updateUserAPI, insertUserAPI, deleteUserAPI } from '../api/userAPI'
-import type { FormInstance, FormRules } from 'element-plus'
+import type { FormInstance, FormRules, ElMessage } from 'element-plus'
 import { Delete, Edit, Search, Share, Upload, User } from '@element-plus/icons-vue'
-import { da } from 'element-plus/es/locale';
+import type { UploadProps, UploadInstance, UploadRawFile } from 'element-plus'
+import { Plus } from '@element-plus/icons-vue'
 
+
+
+//头像
+const state = reactive({
+  circleUrl:
+    'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+  squareUrl:
+    'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png',
+})
+const uploadUrl = ref('http://127.0.0.1:80/File/UploadImage')
+console.log(uploadUrl)
+const upload = ref<UploadInstance | null>()
+
+const handleExceed: UploadProps['onExceed'] = (files) => {
+  upload.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  upload.value!.handleStart(file)
+}
+const handleUploadSuccess = (response: any) => {
+  console.log(response.data, "image")
+  userFrom.avatar = response.data
+  updateUserAPI(userFrom).then(() => {
+    getList()
+  })
+}
+const submitUpload = () => {
+  if (upload.value) {
+    upload.value.submit()
+  }
+  console.log(upload, 'upload')
+}
+
+
+
+const imageUrl = ref('')
 interface Tree {
   id: string
   label: string
@@ -169,6 +246,7 @@ const userFrom = reactive({
   idCard: '',
   email: '',
   addres: '',
+  avatar: '',
   phonenumber: undefined,
   userPosition: '',
   remark: '',
@@ -272,10 +350,12 @@ function getList() {
   loading.value = true;
   userSelectPageAPI(queryParams.value).then(res => {
 
-    console.log(res.data);
+
     userList.value = res.data.list;
     total.value = res.data.pages
     loading.value = false;
+    console.log(res.data.list, 'user');
+
   });
 };
 
@@ -298,14 +378,14 @@ const rules = reactive<FormRules>({
   deptId: [
     {
       required: true,
-      message: '请选择类型',
+      message: '请选择部门',
       trigger: 'change',
     },
   ],
-  state: [
+  phonenumber: [
     {
       required: true,
-      message: '请选择状态',
+      message: '请输入手机号码',
       trigger: 'change',
     },
   ],
@@ -336,6 +416,7 @@ const handleEdit = (index: number, row: any) => {
   userFrom.phonenumber = row.phonenumber
   userFrom.userPosition = row.userPosition
   userFrom.remark = row.remark
+  userFrom.avatar = row.avatar
   console.log(row, "ss");
 
   changed(row.deptId)
@@ -361,6 +442,7 @@ const handleInfo = (index: number, row: any) => {
   userFrom.phonenumber = row.phonenumber
   userFrom.userPosition = row.userPosition
   userFrom.remark = row.remark
+  userFrom.avatar = row.avatar
   console.log(row, "ss");
 
   changed(row.deptId)
@@ -381,6 +463,7 @@ const addUser = () => {
   userFrom.addres = ''
   userFrom.phonenumber = undefined
   userFrom.userPosition = ''
+  userFrom.avatar = state.squareUrl
 }
 
 const handleDelete = (row: any) => {
@@ -469,3 +552,43 @@ const dataTree: Tree[] = [
 
 
 </script>
+
+<style scoped>
+.avatar-uploader .avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+</style>
+
+<style>
+.avatar-uploader .el-upload {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  text-align: center;
+}
+</style>
+
+
+<style>
+form,
+.el-form {
+  width: 100%;
+  margin: 0 auto;
+}
+</style>

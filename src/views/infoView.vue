@@ -227,6 +227,8 @@ const handleDownload = (file: UploadFile) => {
     // 释放掉blob对象
     window.URL.revokeObjectURL(href)
 
+
+
   })
 
 }

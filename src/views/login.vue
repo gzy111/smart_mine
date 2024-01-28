@@ -27,6 +27,7 @@
                     </div>
                     <button class="btn btn-primary" @click="submit">登陆</button>
                     <button class="btn btn-primary" v-show="adminFlg" @click="getSMCode" :disabled="disabled">获取验证码</button>
+
                 </form>
 
             </div>
@@ -38,6 +39,7 @@ import { computed, ref, reactive, toRaw, getCurrentInstance, toRefs } from 'vue'
 import { login, getCode } from '../api/loginAPI'
 import router from '../router';
 import { Timer } from '@element-plus/icons-vue';
+import { ElNotification } from 'element-plus'
 const loginName = ref('')
 const loginPassword = ref('')
 const adminFlg = ref('')
@@ -63,16 +65,22 @@ const submit = (() => {
         if (res.data.code = 200) {
             sessionStorage.setItem("userinfo", JSON.stringify(userinfo))
             sessionStorage.setItem("token", res.data.token)
-            router.push("/userinfo")
+            router.push("/smartWindowView")
         }
     })
 
 })
 
+
 const getSMCode = (() => {
     disabled.value = true
-    getCode({ userId: loginName.value }).then(() => {
-
+    getCode({ userId: loginName.value }).then((res) => {
+        ElNotification({
+            title: '验证码',
+            message: res.data.data,
+            type: 'success',
+            duration: 10*1000,
+        })
     })
     setTimeout(function () {
         disabled.value = false
@@ -124,7 +132,7 @@ a:hover {
     height: 60%;
     margin: auto 0;
     /* border: 1px solid red; */
-    background-color: #fff;
+    background-color: #D2EDEF;
     opacity: 0.8;
     border-radius: 12px;
     box-shadow: 0px 4px 20px 2px rgb(97, 94, 94);
@@ -136,8 +144,8 @@ a:hover {
     height: 100%;
 
     /* background-color: aquamarine; */
-    background: url(../style/image/涠洲岛幕崖.jpg);
-    background-size: cover;
+    background: url(../style/image/index2.gif) no-repeat;
+    background-size: 100% auto;
 }
 
 #card_right {
@@ -145,7 +153,7 @@ a:hover {
     right: 0;
     width: 40%;
     height: 100%;
-
+    border-radius: 12px;
     background-color: rgb(160, 212, 195);
 }
 
@@ -162,4 +170,5 @@ a {
 
 a:hover {
     color: #ffffff;
-}</style>
+}
+</style>

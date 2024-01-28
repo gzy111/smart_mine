@@ -2,6 +2,7 @@
   <div class="common-layout">
     <el-container style="height: 100vh">
       <el-header class="header">智慧矿山管理系统</el-header>
+
       <el-container>
         <!-- <div style="width: 20px;height: 20px;"><el-icon><ArrowRightBold /></el-icon></div> -->
         <!-- 左边菜单栏开始-->
@@ -75,13 +76,18 @@
             <router-link to="smartWindowView">
               <el-menu-item index="/smartWindowView">
                 <el-icon>
-                  <Files />
+                  <Monitor />
                 </el-icon>
                 <template #title>大屏显示</template>
               </el-menu-item>
             </router-link>
             <!-- </a> -->
-
+            <el-menu-item index="1" @click="sessionClear()">
+              <el-icon>
+                <CloseBold />
+              </el-icon>
+              <template #title>退出登录</template>
+            </el-menu-item>
 
           </el-menu>
         </el-aside>
@@ -125,9 +131,11 @@ import {
   Setting,
   ArrowRightBold,
   Expand,
-  Fold
+  Fold,
+  Monitor,
+  CloseBold
 } from '@element-plus/icons-vue'
-
+import router from '../router';
 const isCollapse = ref(true)
 const flgFlase = reactive({
   display: ""
@@ -154,6 +162,12 @@ const handTrueClick = () => {
   isCollapse.value = true
   flgTrue.display = "none"
   flgFlase.display = ""
+}
+
+const sessionClear = () => {
+
+  sessionStorage.clear();
+  router.push("/login")
 }
 
 </script>
